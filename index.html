@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Dashboard + Amazon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>My Site</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- Power BI Embed -->
+  <section id="dashboard">
+    <h2>Power BI Dashboard</h2>
+    <iframe 
+      src="https://app.powerbi.com/view?r=YOUR_PUBLISH_TO_WEB_LINK" 
+      allowFullScreen="true">
+    </iframe>
+  </section>
+
+  <!-- Amazon Product Grid -->
+  <section id="amazon">
+    <h2>Shop on Amazon</h2>
+    <div class="amazon-grid">
+
+      <!-- Product 1 -->
+      <div class="amazon-card">
+        <img src="https://m.media-amazon.com/images/I/81drfTT9ZfL._AC_SL1500_.jpg" alt="Product 1">
+        <div class="amazon-info">
+          <h3>Sample Product 1</h3>
+          <p class="price">$29.99</p>
+          <a href="https://www.amazon.com/dp/B08N5WRWNW?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="amazon-card">
+        <img src="https://m.media-amazon.com/images/I/71g2ednj0JL._AC_UL600_.jpg" alt="Product 2">
+        <div class="amazon-info">
+          <h3>Sample Product 2</h3>
+          <p class="price">$15.99</p>
+          <a href="https://www.amazon.com/dp/B09G3HRP87?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="amazon-card">
+        <img src="https://m.media-amazon.com/images/I/91uwocAMtSL._AC_UL600_.jpg" alt="Product 3">
+        <div class="amazon-info">
+          <h3>Sample Product 3</h3>
+          <p class="price">$10.99</p>
+          <a href="https://www.amazon.com/dp/0316769487?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="background:#f4f4f4; padding:1rem; margin-top:2rem;">
+    <p>&copy; 2025 My Site</p>
+  </footer>
+</body>
+</html>
