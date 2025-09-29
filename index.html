@@ -9,13 +9,20 @@
   <header>
     <h1>My Site</h1>
     <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
+      <button class="tab-btn active" onclick="showTab('home')">Home</button>
+      <button class="tab-btn" onclick="showTab('data')">Data</button>
+      <button class="tab-btn" onclick="showTab('products')">Products</button>
     </nav>
   </header>
 
-  <!-- Power BI Embed -->
-  <section id="dashboard">
+  <!-- Home -->
+  <section id="home" class="tab-content active">
+    <h2>Welcome</h2>
+    <p>This is the home page of your website. You can customize this text later.</p>
+  </section>
+
+  <!-- Data -->
+  <section id="data" class="tab-content">
     <h2>Power BI Dashboard</h2>
     <iframe 
       src="https://app.powerbi.com/view?r=YOUR_PUBLISH_TO_WEB_LINK" 
@@ -23,12 +30,11 @@
     </iframe>
   </section>
 
-  <!-- Amazon Product Grid -->
-  <section id="amazon">
+  <!-- Products -->
+  <section id="products" class="tab-content">
     <h2>Shop on Amazon</h2>
     <div class="amazon-grid">
 
-      <!-- Product 1 -->
       <div class="amazon-card">
         <img src="https://m.media-amazon.com/images/I/81drfTT9ZfL._AC_SL1500_.jpg" alt="Product 1">
         <div class="amazon-info">
@@ -38,7 +44,6 @@
         </div>
       </div>
 
-      <!-- Product 2 -->
       <div class="amazon-card">
         <img src="https://m.media-amazon.com/images/I/71g2ednj0JL._AC_UL600_.jpg" alt="Product 2">
         <div class="amazon-info">
@@ -48,7 +53,6 @@
         </div>
       </div>
 
-      <!-- Product 3 -->
       <div class="amazon-card">
         <img src="https://m.media-amazon.com/images/I/91uwocAMtSL._AC_UL600_.jpg" alt="Product 3">
         <div class="amazon-info">
@@ -61,8 +65,17 @@
     </div>
   </section>
 
-  <footer style="background:#f4f4f4; padding:1rem; margin-top:2rem;">
+  <footer>
     <p>&copy; 2025 My Site</p>
   </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
 </body>
 </html>
