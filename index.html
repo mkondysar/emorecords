@@ -2,79 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Dashboard + Amazon</title>
-  <link rel="stylesheet" href="style.css">
+  <title>My Dashboard Site</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #001f3f; /* navy blue */
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      padding: 1rem;
+      background-color: #001a35;
+    }
+
+    h1 {
+      margin: 0.5rem 0;
+    }
+
+    /* Tabs */
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #003366;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    nav button.active {
+      background-color: #004080;
+      font-weight: bold;
+    }
+
+    section {
+      display: none;
+      padding: 2rem;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    iframe {
+      width: 90%;
+      height: 500px;
+      border: none;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      justify-items: center;
+    }
+
+    .product {
+      background: white;
+      color: black;
+      padding: 1rem;
+      border-radius: 8px;
+      width: 220px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>My Site</h1>
-    <nav>
-      <button class="tab-btn active" onclick="showTab('home')">Home</button>
-      <button class="tab-btn" onclick="showTab('data')">Data</button>
-      <button class="tab-btn" onclick="showTab('products')">Products</button>
-    </nav>
+    <h1>My Dashboard Site</h1>
   </header>
 
+  <nav>
+    <button class="tab active" onclick="showTab('home')">Home</button>
+    <button class="tab" onclick="showTab('data')">Data</button>
+    <button class="tab" onclick="showTab('products')">Products</button>
+  </nav>
+
   <!-- Home -->
-  <section id="home" class="tab-content active">
+  <section id="home" class="active">
     <h2>Welcome</h2>
-    <p>This is the home page of your website. You can customize this text later.</p>
+    <p>This is the home tab. You can add more content here later.</p>
   </section>
 
   <!-- Data -->
-  <section id="data" class="tab-content">
+  <section id="data">
     <h2>Power BI Dashboard</h2>
     <iframe 
-      src="https://app.powerbi.com/view?r=YOUR_PUBLISH_TO_WEB_LINK" 
-      allowFullScreen="true">
-    </iframe>
+      src="https://app.powerbi.com/view?r=YOUR_PUBLISH_TO_WEB_LINK"
+      allowFullScreen="true"></iframe>
   </section>
 
   <!-- Products -->
-  <section id="products" class="tab-content">
-    <h2>Shop on Amazon</h2>
-    <div class="amazon-grid">
-
-      <div class="amazon-card">
-        <img src="https://m.media-amazon.com/images/I/81drfTT9ZfL._AC_SL1500_.jpg" alt="Product 1">
-        <div class="amazon-info">
-          <h3>Sample Product 1</h3>
-          <p class="price">$29.99</p>
-          <a href="https://www.amazon.com/dp/B08N5WRWNW?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
-        </div>
+  <section id="products">
+    <h2>Amazon Products</h2>
+    <div class="product-grid">
+      <div class="product">
+        <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0"
+          src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&ad_type=product_link&tracking_id=YOURTAG-20&marketplace=amazon&region=US&placement=B08N5WRWNW&asins=B08N5WRWNW&show_border=true&link_opens_in_new_window=true">
+        </iframe>
       </div>
-
-      <div class="amazon-card">
-        <img src="https://m.media-amazon.com/images/I/71g2ednj0JL._AC_UL600_.jpg" alt="Product 2">
-        <div class="amazon-info">
-          <h3>Sample Product 2</h3>
-          <p class="price">$15.99</p>
-          <a href="https://www.amazon.com/dp/B09G3HRP87?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
-        </div>
+      <div class="product">
+        <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0"
+          src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&ad_type=product_link&tracking_id=YOURTAG-20&marketplace=amazon&region=US&placement=B09XYZ1234&asins=B09XYZ1234&show_border=true&link_opens_in_new_window=true">
+        </iframe>
       </div>
-
-      <div class="amazon-card">
-        <img src="https://m.media-amazon.com/images/I/91uwocAMtSL._AC_UL600_.jpg" alt="Product 3">
-        <div class="amazon-info">
-          <h3>Sample Product 3</h3>
-          <p class="price">$10.99</p>
-          <a href="https://www.amazon.com/dp/0316769487?tag=YOUR_TAG-20" target="_blank" class="buy-btn">Buy on Amazon</a>
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <footer>
-    <p>&copy; 2025 My Site</p>
-  </footer>
-
   <script>
     function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      event.target.classList.add("active");
     }
   </script>
 </body>
