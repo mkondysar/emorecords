@@ -239,8 +239,9 @@ a { color: #8be9fd; }
   color: var(--muted);
 }
 /* =========================
-   FIXED COLUMNS DARK FIX
+   FIXED COLUMNS DARK FIX (FULL)
    ========================= */
+
 div.dtfc-left-top-block,
 div.dtfc-left-bottom-block,
 div.dtfc-right-top-block,
@@ -248,6 +249,7 @@ div.dtfc-right-bottom-block {
   background: rgba(18,18,26,0.98) !important;
 }
 
+/* Fixed-columns cloned tables */
 div.dtfc-left-top-block table,
 div.dtfc-left-bottom-block table,
 div.dtfc-right-top-block table,
@@ -256,11 +258,22 @@ div.dtfc-right-bottom-block table {
   border-radius: 0 !important;
 }
 
+/* All cells in fixed clones (left + right, top + bottom) */
 div.dtfc-left-top-block th,
 div.dtfc-left-top-block td,
 div.dtfc-left-bottom-block th,
-div.dtfc-left-bottom-block td {
+div.dtfc-left-bottom-block td,
+div.dtfc-right-top-block th,
+div.dtfc-right-top-block td,
+div.dtfc-right-bottom-block th,
+div.dtfc-right-bottom-block td {
   background: rgba(18,18,26,0.98) !important;
   color: #f3f4f6 !important;
   border-color: #242433 !important;
+}
+
+/* Keep zebra striping consistent inside frozen blocks */
+div.dtfc-left-bottom-block tbody tr:nth-child(even) td,
+div.dtfc-right-bottom-block tbody tr:nth-child(even) td {
+  background: rgba(255,255,255,0.02) !important;
 }
