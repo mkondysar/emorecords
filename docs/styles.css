@@ -122,6 +122,14 @@ table.dataTable{
   color: var(--muted) !important;
   margin-top: 10px;
 }
+.dataTables_wrapper {
+  overflow-x: auto;
+}
+
+table.dataTable {
+  width: 100% !important;
+}
+
 a{
   color: #8be9fd;
 }
