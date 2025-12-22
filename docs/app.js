@@ -87,13 +87,17 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const data = parsed.data;
   const cols = parsed.meta.fields;
 
+  const isFestivalsTable = tableId === "festivalsTable";
+
   // Find which column is "Date"/"Dates"
   const dateCol = cols.find(c => dateColNameCandidates.includes(c));
 
+  // Build base column list
+  let finalCols = [...cols];
+
   // Add hidden StartISO/EndISO columns for range filtering (if date column exists)
-  let displayCols = [...cols];
   if (dateCol) {
-    displayCols.push("__startISO", "__endISO");
+    finalCols.push("__startISO", "__endISO");
     data.forEach(row => {
       const { start, end } = parseStartEnd(row[dateCol]);
       row["__startISO"] = toISODate(start);
@@ -101,82 +105,79 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
     });
   }
 
-  // Build thead
+  // For festivals: remove "Source URL" from DISPLAYED columns only
+  // (We still keep it in the row data to build the link on Festival Name.)
+  const displayCols = isFestivalsTable
+    ? finalCols.filter(c => c !== "Source URL")
+    : finalCols;
+
+  // ---- Build table header
   const $thead = $(`#${tableId} thead`);
   $thead.empty();
   $thead.append("<tr>" + displayCols.map(h => `<th>${h}</th>`).join("") + "</tr>");
 
-  // Build rows
+  // ---- Build table body
   const $tbody = $(`#${tableId} tbody`);
   $tbody.empty();
 
   data.forEach(row => {
-// ----- special handling for festivals -----
-const isFestivalsTable = tableId === "festivalsTable";
+    const tds = displayCols.map(col => {
+      const text = String(row[col] ?? "");
 
-// If festivals, remove Source URL from displayed columns
-let displayCols = displayCols;
-if (isFestivalsTable) {
-  displayCols = displayCols.filter(c => c !== "Source URL");
-}
+      // Festivals: make Festival Name clickable using Source URL
+      if (isFestivalsTable && col === "Festival Name") {
+        const url = String(row["Source URL"] ?? "").trim();
+        if (url) {
+          return `<td class="festival-name"><a href="${url}" target="_blank" rel="noopener">${text}</a></td>`;
+        }
+        return `<td class="festival-name">${text}</td>`;
+      }
 
-const tds = displayCols.map(col => {
-  const val = row[col] ?? "";
-  const text = String(val);
+      // Tours: make Source URL show as "link"
+      if (!isFestivalsTable && col === "Source URL") {
+        const url = text.trim();
+        if (url) return `<td><a href="${url}" target="_blank" rel="noopener">link</a></td>`;
+      }
 
-  // Make "Festival Name" clickable using "Source URL"
-  if (isFestivalsTable && col === "Festival Name") {
-    const url = String(row["Source URL"] ?? "").trim();
-    if (url) {
-      return `<td class="festival-name"><a href="${url}" target="_blank" rel="noopener">${text}</a></td>`;
-    }
-    return `<td class="festival-name">${text}</td>`;
-  }
-
-  // For tours, keep Source URL as a normal clickable "link" (optional)
-  if (!isFestivalsTable && col === "Source URL") {
-    const url = text.trim();
-    if (url) return `<td><a href="${url}" target="_blank" rel="noopener">link</a></td>`;
-  }
-
-  return `<td>${text}</td>`;
-}).join("");
+      return `<td>${text}</td>`;
+    }).join("");
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
 
-  // DataTables init
-const dt = $(`#${tableId}`).DataTable({
-  responsive: false,
-  scrollX: true,
-  scrollY: "65vh",          // vertical scroll area
-  scrollCollapse: true,
-  paging: true,
-  pageLength: 25,
-  autoWidth: false,
-  order: [],
+  // ---- DataTables init (destroy if reloading)
+  if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+    $(`#${tableId}`).DataTable().destroy();
+  }
 
-  fixedHeader: true,        // ⬅️ freeze header row
-  fixedColumns: {
-    leftColumns: 2          // ⬅️ freeze first TWO columns
-  },
-
-  columnDefs: [
-    ...(dateCol ? [
-      {
-        targets: [
-          displayCols.indexOf("__startISO"),
-          displayCols.indexOf("__endISO")
-        ],
+  const dt = $(`#${tableId}`).DataTable({
+    responsive: false,
+    scrollX: true,
+    scrollY: "65vh",
+    scrollCollapse: true,
+    pageLength: 25,
+    autoWidth: false,
+    order: [],
+    fixedHeader: true,
+    fixedColumns: {
+      leftColumns: 2
+    },
+    columnDefs: [
+      ...(dateCol ? [{
+        targets: [displayCols.indexOf("__startISO"), displayCols.indexOf("__endISO")],
         visible: false,
         searchable: false
-      }
-    ] : [])
-  ]
-});
+      }] : [])
+    ]
+  });
 
-
-  return { dt, cols: displayCols, dateCol, startIdx: displayCols.indexOf("__startISO"), endIdx: displayCols.indexOf("__endISO") };
+  return {
+    dt,
+    cols: displayCols,
+    dateCol,
+    startIdx: displayCols.indexOf("__startISO"),
+    endIdx: displayCols.indexOf("__endISO")
+  };
 }
 
 // ---------- Column filters (dropdowns) ----------
