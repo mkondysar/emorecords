@@ -1,151 +1,66 @@
-// ---------- helpers ----------
-function isLikelyUrlCol(name) {
-  const n = name.toLowerCase();
-  return n.includes("url") || n.includes("link") || n.includes("source");
-}
+// =========================
+// CSV → DATATABLE LOADER
+// =========================
 
-// Parse dates like "Jun 18, 2026", "Jun 18, 2026 – Jun 21, 2026", "Apr 10–12 & Apr 17–19, 2026"
-function parseStartEnd(rangeText) {
-  if (!rangeText) return { start: null, end: null };
-
-  // Normalize dash types
-  let t = String(rangeText).replace(/\u2013|\u2014/g, "-").trim();
-
-  // Handle "Apr 10-12 & Apr 17-19, 2026" => treat as Apr 10 ... Apr 19 (same year)
-  if (t.includes("&")) {
-    const parts = t.split("&").map(s => s.trim());
-    // Take first date as start, last date as end
-    const start = new Date(parts[0].replace(/-\d+\s*,\s*/g, " ") // "Apr 10-12, 2026" -> "Apr 10 2026"
-                            .replace(",", ""));
-    // For end: keep the latter range end day; easiest: remove the first chunk's leading month if missing
-    const endStr = parts[parts.length - 1].replace(",", "");
-    // If endStr missing year, borrow from start
-    const yearMatch = t.match(/(\d{4})/);
-    const year = yearMatch ? yearMatch[1] : "";
-    const end = new Date(endStr.includes(year) ? endStr : `${endStr} ${year}`);
-    return { start: isNaN(start) ? null : start, end: isNaN(end) ? null : end };
-  }
-
-  // Handle "X – Y" (or "X - Y")
-  if (t.includes(" - ")) t = t.replace(" - ", " – "); // unify spacing if present
-
-  if (t.includes("–") || t.includes(" - ") || t.includes(" -") || t.includes("- ")) {
-    // Split on hyphen but keep readable: assume "Start - End"
-    const split = t.split("-").map(s => s.trim());
-    // If it's like "Jun 18" "21, 2026" we need to borrow month/year from first half
-    const left = split[0];
-    const right = split.slice(1).join("-"); // in case venue has dash (rare)
-
-    // If right lacks month name, borrow from left
-    const monthName = left.split(" ")[0];
-    const yearMatch = t.match(/(\d{4})/);
-    const year = yearMatch ? yearMatch[1] : "";
-
-    let startStr = left.replace(",", "");
-    let endStr = right.replace(",", "");
-
-    // If endStr starts with digits (day) not month, add month
-    if (/^\d{1,2}\b/.test(endStr)) {
-      endStr = `${monthName} ${endStr}`;
-    }
-    // If endStr lacks year, add year
-    if (!/\d{4}/.test(endStr) && year) {
-      endStr = `${endStr} ${year}`;
-    }
-    // If startStr lacks year but end has, add year
-    if (!/\d{4}/.test(startStr) && year) {
-      startStr = `${startStr} ${year}`;
-    }
-
-    const start = new Date(startStr);
-    const end = new Date(endStr);
-    return { start: isNaN(start) ? null : start, end: isNaN(end) ? null : end };
-  }
-
-  // Single day
-  const d = new Date(t.replace(",", ""));
-  return { start: isNaN(d) ? null : d, end: isNaN(d) ? null : d };
-}
-
-function toISODate(input) {
-  if (!(input instanceof Date) || isNaN(input)) return "";
-  const yyyy = input.getFullYear();
-  const mm = String(input.getMonth() + 1).padStart(2, "0");
-  const dd = String(input.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-// ---------- DataTable build ----------
 async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const csvText = await fetch(csvPath).then(r => r.text());
 
   const parsed = Papa.parse(csvText, {
     header: true,
-    skipEmptyLines: true,
+    skipEmptyLines: true
   });
 
   const data = parsed.data;
   const cols = parsed.meta.fields;
-
   const isFestivalsTable = tableId === "festivalsTable";
 
-  // Find which column is "Date"/"Dates"
   const dateCol = cols.find(c => dateColNameCandidates.includes(c));
 
-  // Build base column list
   let finalCols = [...cols];
 
-  // Add hidden StartISO/EndISO columns for range filtering (if date column exists)
   if (dateCol) {
     finalCols.push("__startISO", "__endISO");
     data.forEach(row => {
       const { start, end } = parseStartEnd(row[dateCol]);
-      row["__startISO"] = toISODate(start);
-      row["__endISO"] = toISODate(end);
+      row.__startISO = toISO(start);
+      row.__endISO = toISO(end);
     });
   }
 
-  // For festivals: remove "Source URL" from DISPLAYED columns only
-  // (We still keep it in the row data to build the link on Festival Name.)
   const displayCols = isFestivalsTable
     ? finalCols.filter(c => c !== "Source URL")
     : finalCols;
 
-  // ---- Build table header
   const $thead = $(`#${tableId} thead`);
-  $thead.empty();
-  $thead.append("<tr>" + displayCols.map(h => `<th>${h}</th>`).join("") + "</tr>");
-
-  // ---- Build table body
   const $tbody = $(`#${tableId} tbody`);
+  $thead.empty();
   $tbody.empty();
+
+  $thead.append(`<tr>${displayCols.map(c => `<th>${c}</th>`).join("")}</tr>`);
 
   data.forEach(row => {
     const tds = displayCols.map(col => {
-      const text = String(row[col] ?? "");
+      const val = String(row[col] ?? "");
 
-      // Festivals: make Festival Name clickable using Source URL
       if (isFestivalsTable && col === "Festival Name") {
-        const url = String(row["Source URL"] ?? "").trim();
-        if (url) {
-          return `<td class="festival-name"><a href="${url}" target="_blank" rel="noopener">${text}</a></td>`;
-        }
-        return `<td class="festival-name">${text}</td>`;
+        const url = row["Source URL"];
+        return url
+          ? `<td class="festival-name"><a href="${url}" target="_blank">${val}</a></td>`
+          : `<td class="festival-name">${val}</td>`;
       }
 
-      // Tours: make Source URL show as "link"
       if (!isFestivalsTable && col === "Source URL") {
-        const url = text.trim();
-        if (url) return `<td><a href="${url}" target="_blank" rel="noopener">link</a></td>`;
+        return val
+          ? `<td><a href="${val}" target="_blank">link</a></td>`
+          : `<td></td>`;
       }
 
-      return `<td>${text}</td>`;
+      return `<td>${val}</td>`;
     }).join("");
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
 
-  // ---- DataTables init (destroy if reloading)
   if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
     $(`#${tableId}`).DataTable().destroy();
   }
@@ -159,179 +74,66 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
     autoWidth: false,
     order: [],
     fixedHeader: true,
-    fixedColumns: {
-      leftColumns: 2
-    },
-    columnDefs: [
-      ...(dateCol ? [{
-        targets: [displayCols.indexOf("__startISO"), displayCols.indexOf("__endISO")],
-        visible: false,
-        searchable: false
-      }] : [])
-    ]
+    fixedColumns: { leftColumns: 2 },
+    columnDefs: dateCol ? [{
+      targets: [displayCols.indexOf("__startISO"), displayCols.indexOf("__endISO")],
+      visible: false,
+      searchable: false
+    }] : []
   });
 
   return {
     dt,
     cols: displayCols,
-    dateCol,
     startIdx: displayCols.indexOf("__startISO"),
     endIdx: displayCols.indexOf("__endISO")
   };
 }
 
-// ---------- Column filters (dropdowns) ----------
-function buildColumnDropdownFilters(activeTable, filterCols) {
-  const { dt, cols } = activeTable;
-  const $wrap = $("#columnFilters");
-  $wrap.empty();
+// =========================
+// DATE HELPERS
+// =========================
 
-  filterCols.forEach(colName => {
-    const idx = cols.indexOf(colName);
-    if (idx === -1) return;
-
-    // Get unique values
-    const values = new Set();
-    dt.column(idx).data().each(v => {
-      const s = String(v).replace(/<[^>]*>/g, "").trim();
-      if (s) values.add(s);
-    });
-
-    const sorted = Array.from(values).sort((a,b) => a.localeCompare(b));
-
-    const id = `filter-${colName.replace(/\W+/g, "-").toLowerCase()}`;
-    const html = `
-      <div class="filter">
-        <label for="${id}">${colName}</label>
-        <select id="${id}">
-          <option value="">All</option>
-          ${sorted.map(v => `<option value="${v.replace(/"/g, "&quot;")}">${v}</option>`).join("")}
-        </select>
-      </div>
-    `;
-    $wrap.append(html);
-
-    // Hook change -> exact match
-    $(`#${id}`).on("change", function(){
-      const val = $(this).val();
-      if (!val) {
-        dt.column(idx).search("").draw();
-      } else {
-        // Exact match via regex
-        dt.column(idx).search("^" + $.fn.dataTable.util.escapeRegex(val) + "$", true, false).draw();
-      }
-    });
-  });
-}
-
-// ---------- Date range filter (works off hidden ISO columns) ----------
-function attachDateRangeFiltering(activeTable) {
-  const { dt, startIdx, endIdx } = activeTable;
-
-  // Add custom filter function once
-  if (!$.fn.dataTable.ext.search.__emoArchiveDateFilterAdded) {
-    $.fn.dataTable.ext.search.push(function(settings, data){
-      const from = $("#dateFrom").val();
-      const to = $("#dateTo").val();
-
-      // No date filter set
-      if (!from && !to) return true;
-
-      // helper columns are in the row data at those indices
-      const startISO = data[startIdx] || "";
-      const endISO = data[endIdx] || startISO;
-
-      if (!startISO) return false;
-
-      // overlap check: event [start,end] intersects [from,to]
-      const eventStart = startISO;
-      const eventEnd = endISO;
-
-      const fromISO = from || "0000-01-01";
-      const toISO = to || "9999-12-31";
-
-      return !(eventEnd < fromISO || eventStart > toISO);
-    });
-
-    $.fn.dataTable.ext.search.__emoArchiveDateFilterAdded = true;
+function parseStartEnd(text) {
+  if (!text) return {};
+  const clean = text.replace(/–/g, "-");
+  const parts = clean.split("-");
+  if (parts.length === 1) {
+    const d = new Date(parts[0]);
+    return { start: d, end: d };
   }
-
-  $("#dateFrom, #dateTo").off("change").on("change", () => dt.draw());
+  const start = new Date(parts[0]);
+  const end = new Date(parts.slice(1).join("-"));
+  return { start, end };
 }
 
-// ---------- Global search ----------
-function attachGlobalSearch(activeTable) {
-  const { dt } = activeTable;
-  $("#globalSearch").off("input").on("input", function(){
-    dt.search(this.value).draw();
-  });
+function toISO(d) {
+  if (!(d instanceof Date) || isNaN(d)) return "";
+  return d.toISOString().split("T")[0];
 }
 
-// ---------- Tabs ----------
-function setActiveTab(tabName, tables) {
-  $(".tab").removeClass("active");
-  $(`.tab[data-tab="${tabName}"]`).addClass("active");
+// =========================
+// INIT
+// =========================
 
-  $(".panel").removeClass("active");
-  $(`#panel-${tabName}`).addClass("active");
-
-  // Pick which DataTable is active
-  const active = tabName === "tours" ? tables.tours : tables.festivals;
-
-  // Rebuild filters for this table
-  $("#globalSearch").val("");
-  $("#dateFrom").val("");
-  $("#dateTo").val("");
-
-  active.dt.search("").columns().search("").draw();
-
-  // Column dropdown sets (customize to taste)
-  const filterCols = tabName === "tours"
-    ? ["Headliner", "Tour Name", "City", "State", "Country"]
-    : ["Festival Name", "Location"];
-
-  buildColumnDropdownFilters(active, filterCols);
-  attachGlobalSearch(active);
-  attachDateRangeFiltering(active);
-}
-
-// ---------- init ----------
-(async function init(){
+(async function init() {
   const tours = await loadCsvIntoTable({
-    csvPath: "data/tours.csv",
+    csvPath: "./data/tours.csv",
     tableId: "toursTable",
-    dateColNameCandidates: ["Date"] // tours use Date
+    dateColNameCandidates: ["Date"]
   });
 
   const festivals = await loadCsvIntoTable({
-    csvPath: "data/festivals.csv",
+    csvPath: "./data/festivals.csv",
     tableId: "festivalsTable",
-    dateColNameCandidates: ["Dates"] // festivals use Dates
+    dateColNameCandidates: ["Dates"]
   });
 
-  const tables = { tours, festivals };
+  $(".tab").on("click", function () {
+    $(".tab").removeClass("active");
+    $(this).addClass("active");
 
-  // Tabs
-  $(".tab").on("click", function(){
-    setActiveTab($(this).data("tab"), tables);
+    $(".panel").removeClass("active");
+    $("#panel-" + $(this).data("tab")).addClass("active");
   });
-
-  // Clear filters
-  $("#clearFilters").on("click", function(){
-    $("#globalSearch").val("");
-    $("#dateFrom").val("");
-    $("#dateTo").val("");
-
-    const activeTab = $(".tab.active").data("tab");
-    const active = activeTab === "tours" ? tables.tours : tables.festivals;
-
-    // clear column dropdowns
-    $("#columnFilters select").val("");
-
-    active.dt.search("").columns().search("").draw();
-  });
-
-  // Default tab
-  setActiveTab("tours", tables);
 })();
-
