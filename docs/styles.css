@@ -1,89 +1,77 @@
-:root{
-  --bg:#0b0b10;
-  --card:#12121a;
-  --muted:#9aa0aa;
-  --text:#f3f4f6;
-  --accent:#ff2d86;
-  --accent2:#7c3aed;
-  --line:#242433;
+/* =========================
+   ROOT VARIABLES
+   ========================= */
+:root {
+  --bg: #0b0b10;
+  --card: #12121a;
+  --muted: #9aa0aa;
+  --text: #f3f4f6;
+  --accent: #ff2d86;
+  --accent2: #7c3aed;
+  --line: #242433;
   --shadow: 0 12px 40px rgba(0,0,0,.35);
   --radius: 16px;
 }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
+/* =========================
+   BASE
+   ========================= */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 600px at 20% 0%, rgba(255,45,134,.20), transparent 55%),
-              radial-gradient(1000px 600px at 80% 10%, rgba(124,58,237,.20), transparent 55%),
-              var(--bg);
-  color:var(--text);
-}
-/* Bold Headliner column (tours table) */
-#toursTable td:first-child {
-  font-weight: 700;
-}
-/* Festival name column styling */
-#festivalsTable td.festival-name,
-#festivalsTable td.festival-name a {
-  color: #8be9fd; /* light blue */
-  text-decoration: none;
-}
-#festivalsTable td.festival-name a:hover {
-  text-decoration: underline;
-}
-/* Wrap text in all table cells */
-table.dataTable td, table.dataTable th {
-  white-space: normal !important;
-  word-break: break-word;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(255,45,134,.20), transparent 55%),
+    radial-gradient(1000px 600px at 80% 10%, rgba(124,58,237,.20), transparent 55%),
+    var(--bg);
+  color: var(--text);
 }
 
-/* Set a consistent width for Headliner */
-#toursTable th:first-child, #toursTable td:first-child {
-  width: 170px;
-  max-width: 170px;
-}
-
-/* Limit all columns AFTER Headliner to same width and wrap */
-#toursTable th:not(:first-child),
-#toursTable td:not(:first-child),
-#festivalsTable th:not(:first-child),
-#festivalsTable td:not(:first-child) {
-  width: 170px;
-  max-width: 170px;
-}
-/* Ensure wrapping also applies inside FixedColumns clones */
-.dtfc-fixed-left td, .dtfc-fixed-left th,
-.dtfc-fixed-right td, .dtfc-fixed-right th {
-  white-space: normal !important;
-  word-break: break-word;
-}
-
-.hero{
+/* =========================
+   HERO / HEADER
+   ========================= */
+.hero {
   padding: 36px 0 18px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(18,18,26,.85), rgba(11,11,16,.75));
 }
-.hero-inner{
+
+.hero-inner {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 18px;
 }
-.hero h1{margin:0 0 6px; letter-spacing:.3px}
-.hero p{margin:0; color:var(--muted)}
 
-.wrap{
-  max-width:1100px;
+.hero h1 {
+  margin: 0 0 6px;
+  letter-spacing: .3px;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* =========================
+   WRAP
+   ========================= */
+.wrap {
+  max-width: 1100px;
   margin: 18px auto 40px;
   padding: 0 18px;
 }
 
-.tabs{
-  display:flex;
-  gap:10px;
+/* =========================
+   TABS
+   ========================= */
+.tabs {
+  display: flex;
+  gap: 10px;
   margin: 10px 0 12px;
 }
-.tab{
+
+.tab {
   background: var(--card);
   color: var(--text);
   border: 1px solid var(--line);
@@ -93,13 +81,18 @@ table.dataTable td, table.dataTable th {
   box-shadow: var(--shadow);
   transition: transform .08s ease;
 }
-.tab:hover{transform: translateY(-1px)}
-.tab.active{
+
+.tab:hover { transform: translateY(-1px); }
+
+.tab.active {
   border-color: rgba(255,45,134,.55);
   box-shadow: 0 0 0 2px rgba(255,45,134,.18), var(--shadow);
 }
 
-.filters{
+/* =========================
+   FILTERS
+   ========================= */
+.filters {
   background: rgba(18,18,26,.85);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -107,32 +100,42 @@ table.dataTable td, table.dataTable th {
   box-shadow: var(--shadow);
   margin-bottom: 14px;
 }
-.filter-row{
-  display:flex;
+
+.filter-row {
+  display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-.filter{
-  display:flex;
+
+.filter {
+  display: flex;
   flex-direction: column;
   gap: 6px;
   min-width: 220px;
 }
-label{font-size: 12px; color: var(--muted)}
-input, select{
+
+label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+input,
+select {
   background: #0f0f16;
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 10px 10px;
+  padding: 10px;
   outline: none;
 }
-input:focus, select:focus{
+
+input:focus,
+select:focus {
   border-color: rgba(124,58,237,.6);
   box-shadow: 0 0 0 2px rgba(124,58,237,.2);
 }
 
-.btn{
+.btn {
   background: linear-gradient(90deg, rgba(255,45,134,.9), rgba(124,58,237,.9));
   border: none;
   color: white;
@@ -141,50 +144,123 @@ input:focus, select:focus{
   cursor: pointer;
 }
 
-.panel{display:none}
-.panel.active{display:block}
+/* =========================
+   PANELS
+   ========================= */
+.panel { display: none; }
+.panel.active { display: block; }
 
-/* DataTables theme-ish */
-table.dataTable{
-  background: rgba(18,18,26,.85);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.dataTables_wrapper .dataTables_filter,
-.dataTables_wrapper .dataTables_length{
-  display:none; /* we use our own filters */
-}
-.dataTables_wrapper .dataTables_info,
-.dataTables_wrapper .dataTables_paginate{
-  color: var(--muted) !important;
-  margin-top: 10px;
-}
+/* =========================
+   DATATABLES BASE
+   ========================= */
 .dataTables_wrapper {
   overflow-x: auto;
 }
 
 table.dataTable {
+  background: rgba(18,18,26,.85);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   width: 100% !important;
 }
-/* Fix background bleed on frozen columns */
-.dtfc-fixed-left,
-.dtfc-fixed-right {
-  background-color: rgba(18,18,26,0.95);
+
+table.dataTable thead th {
+  background: rgba(18,18,26,.95);
+  border-bottom: 1px solid var(--line);
 }
 
-/* Make sure header stays above content */
+table.dataTable tbody tr:nth-child(even) {
+  background: rgba(255,255,255,.02);
+}
+
+/* Hide built-in DT search/length (we use custom filters) */
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length {
+  display: none;
+}
+
+.dataTables_info,
+.dataTables_paginate {
+  color: var(--muted) !important;
+  margin-top: 10px;
+}
+
+/* =========================
+   TEXT WRAPPING + WIDTHS
+   ========================= */
+table.dataTable td,
+table.dataTable th {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* Headliner column width + bold */
+#toursTable th:first-child,
+#toursTable td:first-child {
+  width: 170px;
+  max-width: 170px;
+  font-weight: 700;
+}
+
+/* All columns after Headliner (tours + festivals) */
+#toursTable th:not(:first-child),
+#toursTable td:not(:first-child),
+#festivalsTable th:not(:first-child),
+#festivalsTable td:not(:first-child) {
+  width: 170px;
+  max-width: 170px;
+}
+
+/* =========================
+   FESTIVAL NAME STYLING
+   ========================= */
+#festivalsTable td.festival-name,
+#festivalsTable td.festival-name a {
+  color: #8be9fd;
+  text-decoration: none;
+}
+
+#festivalsTable td.festival-name a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   FIXED COLUMNS SUPPORT
+   ========================= */
+.dtfc-fixed-left,
+.dtfc-fixed-right {
+  background-color: rgba(18,18,26,.95);
+}
+
+.dtfc-fixed-left td,
+.dtfc-fixed-left th,
+.dtfc-fixed-right td,
+.dtfc-fixed-right th {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
 .dataTables_scrollHead {
   z-index: 5;
 }
 
-a{
+/* =========================
+   LINKS
+   ========================= */
+a {
   color: #8be9fd;
 }
-.footer{
-  border-top:1px solid var(--line);
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.footer {
+  border-top: 1px solid var(--line);
   padding: 18px 0;
   color: var(--muted);
 }
-
