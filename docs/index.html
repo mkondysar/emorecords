@@ -1,1 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elder Emo Tour Archive</title>
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>🖤 Elder Emo Tour Archive</h1>
+      <p>Search, filter, and obsessively catalog 2026 tours + festivals.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="tabs">
+      <button class="tab active" data-tab="tours">Tours</button>
+      <button class="tab" data-tab="festivals">Festivals</button>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters" id="filters">
+      <div class="filter-row" id="commonFilters">
+        <div class="filter">
+          <label for="globalSearch">Search everything</label>
+          <input id="globalSearch" type="text" placeholder="band, city, venue, tour name..." />
+        </div>
+
+        <div class="filter">
+          <label for="dateFrom">Date from</label>
+          <input id="dateFrom" type="date" />
+        </div>
+
+        <div class="filter">
+          <label for="dateTo">Date to</label>
+          <input id="dateTo" type="date" />
+        </div>
+
+        <div class="filter">
+          <label>&nbsp;</label>
+          <button id="clearFilters" class="btn">Clear filters</button>
+        </div>
+      </div>
+
+      <!-- Column dropdown filters will be injected here -->
+      <div class="filter-row" id="columnFilters"></div>
+    </section>
+
+    <!-- Tours table -->
+    <section class="panel active" id="panel-tours">
+      <table id="toursTable" class="display nowrap" style="width:100%">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Festivals table -->
+    <section class="panel" id="panel-festivals">
+      <table id="festivalsTable" class="display nowrap" style="width:100%">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <small>Built on GitHub Pages. Data updates by CSV push. ✨</small>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+  <!-- CSV parser (handles quoted commas properly) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
 
