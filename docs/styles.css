@@ -19,6 +19,45 @@ body{
               var(--bg);
   color:var(--text);
 }
+/* Bold Headliner column (tours table) */
+#toursTable td:first-child {
+  font-weight: 700;
+}
+/* Festival name column styling */
+#festivalsTable td.festival-name,
+#festivalsTable td.festival-name a {
+  color: #8be9fd; /* light blue */
+  text-decoration: none;
+}
+#festivalsTable td.festival-name a:hover {
+  text-decoration: underline;
+}
+/* Wrap text in all table cells */
+table.dataTable td, table.dataTable th {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* Set a consistent width for Headliner */
+#toursTable th:first-child, #toursTable td:first-child {
+  width: 170px;
+  max-width: 170px;
+}
+
+/* Limit all columns AFTER Headliner to same width and wrap */
+#toursTable th:not(:first-child),
+#toursTable td:not(:first-child),
+#festivalsTable th:not(:first-child),
+#festivalsTable td:not(:first-child) {
+  width: 170px;
+  max-width: 170px;
+}
+/* Ensure wrapping also applies inside FixedColumns clones */
+.dtfc-fixed-left td, .dtfc-fixed-left th,
+.dtfc-fixed-right td, .dtfc-fixed-right th {
+  white-space: normal !important;
+  word-break: break-word;
+}
 
 .hero{
   padding: 36px 0 18px;
