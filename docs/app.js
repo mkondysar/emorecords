@@ -127,17 +127,18 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   });
 
   // DataTables init
-  const dt = $(`#${tableId}`).DataTable({
-    responsive: true,
-    pageLength: 25,
-    order: [],
-    columnDefs: [
-      // Hide helper ISO columns
-      ...(dateCol ? [
-        { targets: [finalCols.indexOf("__startISO"), finalCols.indexOf("__endISO")], visible: false, searchable: false }
-      ] : [])
-    ]
-  });
+const dt = $(`#${tableId}`).DataTable({
+  responsive: false,     // <-- stop auto-hiding columns
+  scrollX: true,         // <-- horizontal scroll so ALL columns show
+  autoWidth: false,
+  pageLength: 25,
+  order: [],
+  columnDefs: [
+    ...(dateCol ? [
+      { targets: [finalCols.indexOf("__startISO"), finalCols.indexOf("__endISO")], visible: false, searchable: false }
+    ] : [])
+  ]
+});
 
   return { dt, cols: finalCols, dateCol, startIdx: finalCols.indexOf("__startISO"), endIdx: finalCols.indexOf("__endISO") };
 }
