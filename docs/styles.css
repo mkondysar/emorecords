@@ -174,7 +174,6 @@ table.dataTable tbody tr:nth-child(even) {
   background: rgba(255,255,255,.02);
 }
 
-/* Hide built-in DT search/length (we use custom filters) */
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_length {
   display: none;
@@ -195,7 +194,7 @@ table.dataTable th {
   word-break: break-word;
 }
 
-/* Headliner column width + bold */
+/* Headliner column */
 #toursTable th:first-child,
 #toursTable td:first-child {
   width: 170px;
@@ -203,7 +202,7 @@ table.dataTable th {
   font-weight: 700;
 }
 
-/* All columns after Headliner (tours + festivals) */
+/* Other columns */
 #toursTable th:not(:first-child),
 #toursTable td:not(:first-child),
 #festivalsTable th:not(:first-child),
@@ -213,7 +212,7 @@ table.dataTable th {
 }
 
 /* =========================
-   FESTIVAL NAME STYLING
+   FESTIVAL NAME
    ========================= */
 #festivalsTable td.festival-name,
 #festivalsTable td.festival-name a {
@@ -226,19 +225,30 @@ table.dataTable th {
 }
 
 /* =========================
-   FIXED COLUMNS SUPPORT
+   FIXED COLUMNS DARK FIX
    ========================= */
-.dtfc-fixed-left,
-.dtfc-fixed-right {
-  background-color: rgba(18,18,26,.95);
+div.dtfc-left-top-block,
+div.dtfc-left-bottom-block,
+div.dtfc-right-top-block,
+div.dtfc-right-bottom-block {
+  background: rgba(18,18,26,0.98) !important;
 }
 
-.dtfc-fixed-left td,
-.dtfc-fixed-left th,
-.dtfc-fixed-right td,
-.dtfc-fixed-right th {
-  white-space: normal !important;
-  word-break: break-word;
+div.dtfc-left-top-block table,
+div.dtfc-left-bottom-block table,
+div.dtfc-right-top-block table,
+div.dtfc-right-bottom-block table {
+  background: rgba(18,18,26,0.98) !important;
+  border-radius: 0 !important;
+}
+
+div.dtfc-left-top-block th,
+div.dtfc-left-top-block td,
+div.dtfc-left-bottom-block th,
+div.dtfc-left-bottom-block td {
+  background: rgba(18,18,26,0.98) !important;
+  color: #f3f4f6 !important;
+  border-color: #242433 !important;
 }
 
 .dataTables_scrollHead {
@@ -246,19 +256,10 @@ table.dataTable th {
 }
 
 /* =========================
-   LINKS
+   LINKS + FOOTER
    ========================= */
-a {
-  color: #8be9fd;
-}
+a { color: #8be9fd; }
 
-a:hover {
-  text-decoration: underline;
-}
-
-/* =========================
-   FOOTER
-   ========================= */
 .footer {
   border-top: 1px solid var(--line);
   padding: 18px 0;
