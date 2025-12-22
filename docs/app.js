@@ -91,9 +91,9 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const dateCol = cols.find(c => dateColNameCandidates.includes(c));
 
   // Add hidden StartISO/EndISO columns for range filtering (if date column exists)
-  let finalCols = [...cols];
+  let displayCols = [...cols];
   if (dateCol) {
-    finalCols.push("__startISO", "__endISO");
+    displayCols.push("__startISO", "__endISO");
     data.forEach(row => {
       const { start, end } = parseStartEnd(row[dateCol]);
       row["__startISO"] = toISODate(start);
@@ -104,24 +104,43 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   // Build thead
   const $thead = $(`#${tableId} thead`);
   $thead.empty();
-  $thead.append("<tr>" + finalCols.map(h => `<th>${h}</th>`).join("") + "</tr>");
+  $thead.append("<tr>" + displayCols.map(h => `<th>${h}</th>`).join("") + "</tr>");
 
   // Build rows
   const $tbody = $(`#${tableId} tbody`);
   $tbody.empty();
 
   data.forEach(row => {
-    const tds = finalCols.map(col => {
-      const val = row[col] ?? "";
+// ----- special handling for festivals -----
+const isFestivalsTable = tableId === "festivalsTable";
 
-      // Make URL columns clickable
-      if (isLikelyUrlCol(col) && String(val).trim()) {
-        const safe = String(val).trim();
-        return `<td><a href="${safe}" target="_blank" rel="noopener">link</a></td>`;
-      }
+// If festivals, remove Source URL from displayed columns
+let displayCols = displayCols;
+if (isFestivalsTable) {
+  displayCols = displayCols.filter(c => c !== "Source URL");
+}
 
-      return `<td>${String(val)}</td>`;
-    }).join("");
+const tds = displayCols.map(col => {
+  const val = row[col] ?? "";
+  const text = String(val);
+
+  // Make "Festival Name" clickable using "Source URL"
+  if (isFestivalsTable && col === "Festival Name") {
+    const url = String(row["Source URL"] ?? "").trim();
+    if (url) {
+      return `<td class="festival-name"><a href="${url}" target="_blank" rel="noopener">${text}</a></td>`;
+    }
+    return `<td class="festival-name">${text}</td>`;
+  }
+
+  // For tours, keep Source URL as a normal clickable "link" (optional)
+  if (!isFestivalsTable && col === "Source URL") {
+    const url = text.trim();
+    if (url) return `<td><a href="${url}" target="_blank" rel="noopener">link</a></td>`;
+  }
+
+  return `<td>${text}</td>`;
+}).join("");
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
@@ -146,8 +165,8 @@ const dt = $(`#${tableId}`).DataTable({
     ...(dateCol ? [
       {
         targets: [
-          finalCols.indexOf("__startISO"),
-          finalCols.indexOf("__endISO")
+          displayCols.indexOf("__startISO"),
+          displayCols.indexOf("__endISO")
         ],
         visible: false,
         searchable: false
@@ -157,7 +176,7 @@ const dt = $(`#${tableId}`).DataTable({
 });
 
 
-  return { dt, cols: finalCols, dateCol, startIdx: finalCols.indexOf("__startISO"), endIdx: finalCols.indexOf("__endISO") };
+  return { dt, cols: displayCols, dateCol, startIdx: displayCols.indexOf("__startISO"), endIdx: displayCols.indexOf("__endISO") };
 }
 
 // ---------- Column filters (dropdowns) ----------
