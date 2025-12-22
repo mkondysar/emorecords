@@ -128,17 +128,34 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
 
   // DataTables init
 const dt = $(`#${tableId}`).DataTable({
-  responsive: false,     // <-- stop auto-hiding columns
-  scrollX: true,         // <-- horizontal scroll so ALL columns show
-  autoWidth: false,
+  responsive: false,
+  scrollX: true,
+  scrollY: "65vh",          // vertical scroll area
+  scrollCollapse: true,
+  paging: true,
   pageLength: 25,
+  autoWidth: false,
   order: [],
+
+  fixedHeader: true,        // ⬅️ freeze header row
+  fixedColumns: {
+    leftColumns: 2          // ⬅️ freeze first TWO columns
+  },
+
   columnDefs: [
     ...(dateCol ? [
-      { targets: [finalCols.indexOf("__startISO"), finalCols.indexOf("__endISO")], visible: false, searchable: false }
+      {
+        targets: [
+          finalCols.indexOf("__startISO"),
+          finalCols.indexOf("__endISO")
+        ],
+        visible: false,
+        searchable: false
+      }
     ] : [])
   ]
 });
+
 
   return { dt, cols: finalCols, dateCol, startIdx: finalCols.indexOf("__startISO"), endIdx: finalCols.indexOf("__endISO") };
 }
