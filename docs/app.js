@@ -249,7 +249,7 @@ function setActiveTab(tabName, tables) {
 
   // Column dropdown sets (customize to taste)
   const filterCols = tabName === "tours"
-    ? ["Headliner", "Tour Name", "City", "State / Country"]
+    ? ["Headliner", "Tour Name", "City", "State", "Country"]
     : ["Festival Name", "Location"];
 
   buildColumnDropdownFilters(active, filterCols);
