@@ -129,6 +129,16 @@ table.dataTable{
 table.dataTable {
   width: 100% !important;
 }
+/* Fix background bleed on frozen columns */
+.dtfc-fixed-left,
+.dtfc-fixed-right {
+  background-color: rgba(18,18,26,0.95);
+}
+
+/* Make sure header stays above content */
+.dataTables_scrollHead {
+  z-index: 5;
+}
 
 a{
   color: #8be9fd;
