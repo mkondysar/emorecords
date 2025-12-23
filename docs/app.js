@@ -47,8 +47,7 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
     });
   }
 
-  // Display columns: hide Source URL always (we still use it for linking)
-  const displayCols = finalCols.filter((c) => c !== "Source URL");
+const displayCols = [...finalCols];
 
   // Build THEAD / TBODY
 const $table = $(`#${tableId}`);
@@ -107,16 +106,32 @@ $tbody.empty();
   const startIdx = displayCols.indexOf("__startISO");
   const endIdx = displayCols.indexOf("__endISO");
 
-  const hiddenIsoDefs =
-    dateCol && startIdx !== -1 && endIdx !== -1
-      ? [
-          {
-            targets: [startIdx, endIdx],
-            visible: false,
-            searchable: false
-          }
-        ]
-      : [];
+  const hiddenCols = [];
+
+// Hide Source URL column
+const sourceUrlIdx = displayCols.indexOf("Source URL");
+if (sourceUrlIdx !== -1) {
+  hiddenCols.push({
+    targets: sourceUrlIdx,
+    visible: false,
+    searchable: false
+  });
+}
+
+// Hide ISO date helper columns
+if (dateCol) {
+  const startIdx = displayCols.indexOf("__startISO");
+  const endIdx   = displayCols.indexOf("__endISO");
+
+  if (startIdx !== -1 && endIdx !== -1) {
+    hiddenCols.push({
+      targets: [startIdx, endIdx],
+      visible: false,
+      searchable: false
+    });
+  }
+}
+
 
   // Init DataTable
   const dt = $table.DataTable({
@@ -133,7 +148,7 @@ $tbody.empty();
     // If you don't have the JS included, comment this out or it will break the table.
     fixedColumns: { leftColumns: 2 },
 
-    columnDefs: hiddenIsoDefs
+    columnDefs: hiddenCols
   });
 
   return {
