@@ -137,3 +137,5 @@ function toISO(d) {
     $("#panel-" + $(this).data("tab")).addClass("active");
   });
 })();
+
+console.log("✅ app.js loaded");
