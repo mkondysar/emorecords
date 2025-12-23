@@ -503,34 +503,25 @@ table.dataTable td {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Sticky first column */
-#toursTable thead th:first-child,
-#toursTable tbody td:first-child {
+/* =========================================
+   Sticky first column (TOURS) — no plugin
+   ========================================= */
+
+#panel-tours .dataTables_scrollBody {
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#panel-tours table.dataTable thead th:first-child,
+#panel-tours table.dataTable tbody td:first-child {
   position: sticky;
   left: 0;
   z-index: 3;
-  background: var(--card);
+  background: var(--card) !important;
   background-clip: padding-box;
-}
-
-/* Keep header above body */
-#toursTable thead th:first-child {
-  z-index: 6;
-}
-
-/* Nice divider so it looks intentional */
-#toursTable thead th:first-child,
-#toursTable tbody td:first-child {
   box-shadow: 10px 0 18px rgba(0,0,0,.45);
 }
 
-/* If you use striping, match it for the sticky column too */
-#toursTable tbody tr.odd td:first-child { background: rgba(255,255,255,0.03); }
-#toursTable tbody tr.even td:first-child { background: var(--card); }
-
-/* Hover match */
-#toursTable tbody tr:hover td:first-child {
-  background: rgba(255,255,255,0.06);
+#panel-tours table.dataTable thead th:first-child {
+  z-index: 6;
 }
-
-body { outline: 5px solid hotpink !important; }
