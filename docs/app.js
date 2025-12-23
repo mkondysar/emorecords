@@ -182,4 +182,17 @@ function getActiveDT(tours, festivals) {
   }
 })();
 
+
+// After your festivals DataTable is created:
+const festivalsDT = $('#festivalsTable').DataTable(/* your options */);
+
+// When the Festivals tab is shown, fix column sizing
+document.querySelector('button[data-tab="festivals"]')?.addEventListener('click', () => {
+  setTimeout(() => festivalsDT.columns.adjust().draw(false), 50);
+});
+
+// Also adjust on window resize
+window.addEventListener('resize', () => festivalsDT.columns.adjust());
+
+
 console.log("✅ app.js loaded");
