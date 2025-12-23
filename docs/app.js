@@ -51,8 +51,6 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
   if ($.fn.DataTable.isDataTable($table)) {
     $table.DataTable().destroy(true);
   }
-
-  fixedColumns: isFestivalsTable ? false : { leftColumns: 1 },
       
   $thead.empty();
   $tbody.empty();
@@ -169,6 +167,8 @@ const dt = $table.DataTable({
   // (Optional but helps mobile): don't allow DataTables to change table width based on content
   // dom: "t<'dt-footer'ip>",
 
+    fixedColumns: isFestivalsTable ? false : { leftColumns: 1 },
+  
   columnDefs: [
     ...hiddenCols,
     ...widthDefs(cols, isFestivalsTable)
