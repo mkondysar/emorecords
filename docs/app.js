@@ -212,40 +212,42 @@ const $from = $("#dateFrom");
 const $to = $("#dateTo");
 
 // One shared filter function for both DataTables instances
-const dateRangeFilter = function (settings, rowData) {
+$.fn.dataTable.ext.search.push(function (settings, rowData) {
   const tableId = settings.nTable?.id;
-  const isTours = tableId === "toursTable";
-  const isFests = tableId === "festivalsTable";
 
-  // Only affect our two tables
-  if (!isTours && !isFests) return true;
+  if (tableId !== "toursTable" && tableId !== "festivalsTable") {
+    return true;
+  }
 
-  const from = $from.val(); // "YYYY-MM-DD" or ""
-  const to = $to.val();     // "YYYY-MM-DD" or ""
+  const from = $("#dateFrom").val();
+  const to = $("#dateTo").val();
 
-  // No date filters set
   if (!from && !to) return true;
 
-  // Pick the correct hidden ISO columns for this table
-  const startIdx = isTours ? tours.startIdx : festivals.startIdx;
-  const endIdx   = isTours ? tours.endIdx   : festivals.endIdx;
+  // Dynamically find ISO columns by header text
+  const api = new $.fn.dataTable.Api(settings);
+  const headers = api.columns().header().toArray();
 
-  // If table doesn't have ISO cols, don't filter it out
+  const startIdx = headers.findIndex(
+    th => th.textContent.trim() === "__startISO"
+  );
+  const endIdx = headers.findIndex(
+    th => th.textContent.trim() === "__endISO"
+  );
+
   if (startIdx === -1 || endIdx === -1) return true;
 
-  const startISO = rowData[startIdx] || "";
-  const endISO   = rowData[endIdx] || startISO;
+  const startISO = rowData[startIdx];
+  const endISO = rowData[endIdx] || startISO;
 
-  // If we can't parse a date, let it pass (keeps “unknown date” rows visible)
   if (!startISO) return true;
 
-  // Inclusive overlap logic:
-  // row passes if it overlaps the [from, to] window
   const windowStart = from || "0000-01-01";
-  const windowEnd   = to   || "9999-12-31";
+  const windowEnd = to || "9999-12-31";
 
   return endISO >= windowStart && startISO <= windowEnd;
-};
+});
+
 
 // Register it once (avoid duplicates if init re-runs)
 $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn !== dateRangeFilter);
