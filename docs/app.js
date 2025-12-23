@@ -112,21 +112,72 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
     if (cityIdx !== -1) defaultOrder = [[cityIdx, "asc"]];
   }
 
-  const dt = $table.DataTable({
-    responsive: false,
-    scrollX: true,
-    scrollY: "65vh",
-    scrollCollapse: true,
-    pageLength: 25,
-    autoWidth: false,
-    order: defaultOrder,
-    fixedHeader: true,
+ // Build width rules by table type (targets are column indexes)
+function widthDefs(cols, isFestivalsTable) {
+  const idx = name => cols.findIndex(c => norm(c) === norm(name));
 
-    // IMPORTANT: comment this out unless you also load FixedColumns JS
-    // fixedColumns: { leftColumns: 2 },
+  const defs = [];
 
-    columnDefs: hiddenCols
-  });
+  if (!isFestivalsTable) {
+    // TOURS table widths
+    const map = [
+      ["Headliner", "140px"],
+      ["Tour Name", "220px"],
+      ["Support", "260px"],
+      ["Date", "120px"],
+      ["Venue", "220px"],
+      ["City", "160px"],
+      ["State", "90px"],
+      ["Country", "120px"]
+      // Source URL is hidden already
+    ];
+
+    map.forEach(([name, w]) => {
+      const i = idx(name);
+      if (i !== -1) defs.push({ targets: i, width: w });
+    });
+  } else {
+    // FESTIVALS table widths
+    const map = [
+      ["Festival Name", "180px"],
+      ["Location", "220px"],
+      ["Date", "140px"],   // if your column is "Dates" this won't match; see below
+      ["Dates", "140px"],
+      ["Lineup", "320px"]
+    ];
+
+    map.forEach(([name, w]) => {
+      const i = idx(name);
+      if (i !== -1) defs.push({ targets: i, width: w });
+    });
+  }
+
+  return defs;
+}
+
+const dt = $table.DataTable({
+  responsive: false,
+  scrollX: true,
+  scrollCollapse: true,
+  scrollY: "65vh",
+  pageLength: 25,
+  autoWidth: false,
+  order: defaultOrder,
+  fixedHeader: true,
+  // (Optional but helps mobile): don't allow DataTables to change table width based on content
+  // dom: "t<'dt-footer'ip>",
+
+  columnDefs: [
+    ...hiddenCols,
+    ...widthDefs(cols, isFestivalsTable)
+  ],
+
+  // Force a resize/measure after initialization so scrollX calculates correctly
+  initComplete: function () {
+    const api = this.api();
+    setTimeout(() => api.columns.adjust().draw(false), 0);
+  }
+});
 
   return { dt };
 }
