@@ -191,6 +191,55 @@ $("#globalSearch").on("input", function () {
   tours.dt.search(term).draw();
   festivals.dt.search(term).draw();
 });
+// --- Date range filter (applies to both tables) ---
+const $from = $("#dateFrom");
+const $to = $("#dateTo");
+
+// One shared filter function for both DataTables instances
+const dateRangeFilter = function (settings, rowData) {
+  const tableId = settings.nTable?.id;
+  const isTours = tableId === "toursTable";
+  const isFests = tableId === "festivalsTable";
+
+  // Only affect our two tables
+  if (!isTours && !isFests) return true;
+
+  const from = $from.val(); // "YYYY-MM-DD" or ""
+  const to = $to.val();     // "YYYY-MM-DD" or ""
+
+  // No date filters set
+  if (!from && !to) return true;
+
+  // Pick the correct hidden ISO columns for this table
+  const startIdx = isTours ? tours.startIdx : festivals.startIdx;
+  const endIdx   = isTours ? tours.endIdx   : festivals.endIdx;
+
+  // If table doesn't have ISO cols, don't filter it out
+  if (startIdx === -1 || endIdx === -1) return true;
+
+  const startISO = rowData[startIdx] || "";
+  const endISO   = rowData[endIdx] || startISO;
+
+  // If we can't parse a date, let it pass (keeps “unknown date” rows visible)
+  if (!startISO) return true;
+
+  // Inclusive overlap logic:
+  // row passes if it overlaps the [from, to] window
+  const windowStart = from || "0000-01-01";
+  const windowEnd   = to   || "9999-12-31";
+
+  return endISO >= windowStart && startISO <= windowEnd;
+};
+
+// Register it once (avoid duplicates if init re-runs)
+$.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn !== dateRangeFilter);
+$.fn.dataTable.ext.search.push(dateRangeFilter);
+
+// Redraw on date changes
+$from.add($to).on("change", function () {
+  tours.dt.draw();
+  festivals.dt.draw();
+});
 
 
     $(".tab").on("click", function () {
