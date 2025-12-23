@@ -1,7 +1,17 @@
 // =========================
-// HELPERS
+// Elder Emo Tour Archive — app.js (FULL WORKING SCRIPT)
+// - Loads CSVs into DataTables
+// - Hides "Source URL" column (still used for links)
+// - Tours: "Tour name" clickable → Source URL
+// - Festivals: "Festival Name" clickable → Source URL
+// - Global search (#globalSearch) filters ACTIVE tab
+// - Date filters (#dateFrom / #dateTo) filter BOTH tables using hidden ISO columns
+// - Clear button (#clearFilters)
 // =========================
 
+// -------------------------
+// Helpers
+// -------------------------
 function escHtml(s) {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -23,7 +33,7 @@ function norm(s) {
 function parseStartEnd(text) {
   if (!text) return {};
   const clean = String(text).replace(/–/g, "-").trim();
-  const parts = clean.split("-").map(p => p.trim()).filter(Boolean);
+  const parts = clean.split("-").map((p) => p.trim()).filter(Boolean);
 
   if (parts.length === 1) {
     const d = new Date(parts[0]);
@@ -40,10 +50,9 @@ function toISO(d) {
   return d.toISOString().split("T")[0];
 }
 
-// =========================
-// CSV → DATATABLE LOADER
-// =========================
-
+// -------------------------
+// CSV → DataTable loader
+// -------------------------
 async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const isFestivalsTable = tableId === "festivalsTable";
 
@@ -52,19 +61,23 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   if (!res.ok) throw new Error(`Failed to fetch ${csvPath}: ${res.status}`);
   const csvText = await res.text();
 
-  const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+  const parsed = Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true
+  });
 
   const data = Array.isArray(parsed.data) ? parsed.data : [];
   const cols = Array.isArray(parsed.meta?.fields) ? parsed.meta.fields : [];
 
   // Identify date column
-  const dateCol = cols.find(c => dateColNameCandidates.includes(c));
+  const dateCol = cols.find((c) => dateColNameCandidates.includes(c));
 
-  // Build full column list (including helper cols)
+  // Build columns list (keep ALL cols including Source URL + helper ISO cols)
   const allCols = [...cols];
+
   if (dateCol) {
     allCols.push("__startISO", "__endISO");
-    data.forEach(row => {
+    data.forEach((row) => {
       const { start, end } = parseStartEnd(row?.[dateCol]);
       row.__startISO = toISO(start);
       row.__endISO = toISO(end);
@@ -76,7 +89,7 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const $thead = $table.find("thead");
   const $tbody = $table.find("tbody");
 
-  // Full destroy so old wrappers/inputs don’t linger
+  // Fully destroy DataTable + wrapper before rebuilding
   if ($.fn.DataTable.isDataTable($table)) {
     $table.DataTable().destroy(true);
   }
@@ -84,51 +97,61 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   $thead.empty();
   $tbody.empty();
 
-  $thead.append(`<tr>${allCols.map(c => `<th>${escHtml(c)}</th>`).join("")}</tr>`);
+  // Header
+  $thead.append(
+    `<tr>${allCols.map((c) => `<th>${escHtml(c)}</th>`).join("")}</tr>`
+  );
 
-  data.forEach(row => {
-    const tds = allCols.map(col => {
-      const colNorm = norm(col);
-      const rawVal = row?.[col] ?? "";
-      const val = escHtml(rawVal);
+  // Body
+  data.forEach((row) => {
+    const tds = allCols
+      .map((col) => {
+        const colNorm = norm(col);
+        const rawVal = row?.[col] ?? "";
+        const val = escHtml(rawVal);
 
-      // Always render ISO helper columns (needed for filtering)
-      if (colNorm === "__startiso" || colNorm === "__endiso") {
-        return `<td>${escHtml(rawVal)}</td>`;
-      }
+        // ALWAYS render ISO helper columns so filters can use them
+        if (colNorm === "__startiso" || colNorm === "__endiso") {
+          return `<td>${escHtml(rawVal)}</td>`;
+        }
 
-      const url = row?.["Source URL"];
-      const hasUrl = url && String(url).trim() !== "";
+        const url = row?.["Source URL"];
+        const hasUrl = url && String(url).trim() !== "";
 
-      // Festivals: link Festival Name
-      if (isFestivalsTable && colNorm === "festival name") {
-        return hasUrl
-          ? `<td class="festival-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
-          : `<td class="festival-name">${val}</td>`;
-      }
+        // Festivals: link Festival Name
+        if (isFestivalsTable && colNorm === "festival name") {
+          return hasUrl
+            ? `<td class="festival-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
+            : `<td class="festival-name">${val}</td>`;
+        }
 
-      // Tours: link Tour name
-      if (!isFestivalsTable && colNorm === "tour name") {
-        return hasUrl
-          ? `<td class="tour-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
-          : `<td class="tour-name">${val}</td>`;
-      }
+        // Tours: link Tour name
+        if (!isFestivalsTable && colNorm === "tour name") {
+          return hasUrl
+            ? `<td class="tour-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
+            : `<td class="tour-name">${val}</td>`;
+        }
 
-      return `<td>${val}</td>`;
-    }).join("");
+        return `<td>${val}</td>`;
+      })
+      .join("");
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
 
-  // Hide Source URL + helper cols via DataTables
+  // Column hiding rules (hide Source URL + ISO helper cols)
   const hiddenCols = [];
 
   const sourceUrlIdx = allCols.indexOf("Source URL");
-  if (sourceUrlIdx !== -1) hiddenCols.push({ targets: sourceUrlIdx, visible: false, searchable: false });
+  if (sourceUrlIdx !== -1) {
+    hiddenCols.push({ targets: sourceUrlIdx, visible: false, searchable: false });
+  }
 
   const startIdx = allCols.indexOf("__startISO");
   const endIdx = allCols.indexOf("__endISO");
-  if (startIdx !== -1 && endIdx !== -1) hiddenCols.push({ targets: [startIdx, endIdx], visible: false, searchable: false });
+  if (startIdx !== -1 && endIdx !== -1) {
+    hiddenCols.push({ targets: [startIdx, endIdx], visible: false, searchable: false });
+  }
 
   // Init DataTable
   const dt = $table.DataTable({
@@ -140,67 +163,27 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
     autoWidth: false,
     order: [],
     fixedHeader: true,
-    fixedColumns: { leftColumns: 2 }, // comment out if you don't have FixedColumns JS loaded
+    // If FixedColumns JS isn't loaded, comment out the next line:
+    fixedColumns: { leftColumns: 2 },
     columnDefs: hiddenCols
   });
 
   return { dt, tableId, startIdx, endIdx };
 }
 
-// =========================
-// FILTER WIRING
-// =========================
-
+// -------------------------
+// Active table helper
+// -------------------------
 function getActiveDT(tours, festivals) {
   const activeTab = $(".tab.active").data("tab"); // "tours" or "festivals"
   return activeTab === "festivals" ? festivals.dt : tours.dt;
 }
 
-function installDateFilterOnce() {
-  // Remove any prior date filter we created (prevents duplicates)
-  $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => !fn.__elderEmoDateFilter);
-
-  const fn = function (settings, rowData) {
-    const tableId = settings.nTable && settings.nTable.id;
-    if (tableId !== "toursTable" && tableId !== "festivalsTable") return true;
-
-    const from = $("#dateFrom").val(); // YYYY-MM-DD
-    const to = $("#dateTo").val();
-
-    if (!from && !to) return true;
-
-    // The ISO cols are always the last two cols we added, BUT we stored them as headers "__startISO/__endISO"
-    // Safer: find them by header text each time.
-    const api = new $.fn.dataTable.Api(settings);
-    const headers = api.columns().header().toArray().map(th => th.textContent.trim());
-
-    const startIdx = headers.indexOf("__startISO");
-    const endIdx = headers.indexOf("__endISO");
-
-    if (startIdx === -1 || endIdx === -1) return true;
-
-    const startISO = rowData[startIdx] || "";
-    const endISO = rowData[endIdx] || startISO;
-    if (!startISO) return true;
-
-    const windowStart = from || "0000-01-01";
-    const windowEnd = to || "9999-12-31";
-
-    // overlap inclusive
-    return endISO >= windowStart && startISO <= windowEnd;
-  };
-
-  fn.__elderEmoDateFilter = true;
-  $.fn.dataTable.ext.search.push(fn);
-}
-
-// =========================
+// -------------------------
 // INIT
-// =========================
-
+// -------------------------
 (async function init() {
   try {
-    // Build both tables
     const tours = await loadCsvIntoTable({
       csvPath: "./data/tours.csv",
       tableId: "toursTable",
@@ -213,19 +196,93 @@ function installDateFilterOnce() {
       dateColNameCandidates: ["Dates"]
     });
 
-    // Install one global date filter function
-    installDateFilterOnce();
-
-    // Search: filter the ACTIVE table only
+    // =========================
+    // SEARCH (custom input)
+    // =========================
     $("#globalSearch").on("input", function () {
       const term = this.value || "";
       getActiveDT(tours, festivals).search(term).draw();
     });
 
-    // Date inputs: redraw ACTIVE table (so you can set dates in either tab)
+    // =========================
+    // DATE RANGE FILTER (WORKING VERSION)
+    // =========================
+
+    // Remove any old date filters we previously added
+    $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(
+      (fn) => !fn.__elderEmoDateFilter
+    );
+
+    const elderEmoDateFilter = function (settings, rowData) {
+      const tableId = settings.nTable && settings.nTable.id;
+      if (tableId !== "toursTable" && tableId !== "festivalsTable") return true;
+
+      const from = $("#dateFrom").val(); // YYYY-MM-DD
+      const to = $("#dateTo").val(); // YYYY-MM-DD
+      if (!from && !to) return true;
+
+      const startIdx = tableId === "toursTable" ? tours.startIdx : festivals.startIdx;
+      const endIdx = tableId === "toursTable" ? tours.endIdx : festivals.endIdx;
+
+      if (startIdx === -1 || endIdx === -1) return true;
+
+      const startISO = rowData[startIdx] || "";
+      const endISO = rowData[endIdx] || startISO;
+
+      if (!startISO) return true;
+
+      const windowStart = from || "0000-01-01";
+      const windowEnd = to || "9999-12-31";
+
+      // Overlap inclusive
+      return endISO >= windowStart && startISO <= windowEnd;
+    };
+
+    elderEmoDateFilter.__elderEmoDateFilter = true;
+    $.fn.dataTable.ext.search.push(elderEmoDateFilter);
+
+    // Redraw BOTH tables when date changes
     $("#dateFrom, #dateTo").on("change", function () {
+      tours.dt.draw();
+      festivals.dt.draw();
+    });
+
+    // =========================
+    // CLEAR FILTERS BUTTON
+    // =========================
+    $("#clearFilters").on("click", function () {
+      $("#globalSearch").val("");
+      $("#dateFrom").val("");
+      $("#dateTo").val("");
+
+      tours.dt.search("").draw();
+      festivals.dt.search("").draw();
+    });
+
+    // =========================
+    // TABS
+    // =========================
+    $(".tab").on("click", function () {
+      $(".tab").removeClass("active");
+      $(this).addClass("active");
+
+      $(".panel").removeClass("active");
+      const panelId = "#panel-" + $(this).data("tab");
+      $(panelId).addClass("active");
+
+      // Fix sizing when switching tabs
+      setTimeout(() => {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+      }, 0);
+
+      // Apply filters to the newly active table
       getActiveDT(tours, festivals).draw();
     });
 
-    // Clear button
-    $("#clearFilters").on("click", function () {
+    console.log("✅ tables initialized");
+  } catch (err) {
+    console.error("❌ init failed:", err);
+  }
+})();
+
+console.log("✅ app.js loaded");
