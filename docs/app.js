@@ -63,7 +63,6 @@ if (
     : `<td class="tour-name">${val}</td>`;
 }
 
-      }
 
       return `<td>${val}</td>`;
     }).join("");
