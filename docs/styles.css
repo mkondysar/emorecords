@@ -396,3 +396,21 @@ table.dataTable tbody tr:hover {
   white-space: normal;
   word-break: break-word;
 }
+
+/* Festivals: force column widths */
+#festivalsTable th:nth-child(1),
+#festivalsTable td:nth-child(1) {
+  width: 140px !important;      /* thinner festival name */
+  max-width: 140px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+#festivalsTable th:nth-child(4),
+#festivalsTable td:nth-child(4) {
+  width: 55% !important;        /* wider lineup */
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
