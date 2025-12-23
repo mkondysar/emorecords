@@ -240,6 +240,14 @@ $from.add($to).on("change", function () {
   tours.dt.draw();
   festivals.dt.draw();
 });
+$("#clearFilters").on("click", function () {
+  $("#globalSearch").val("");
+  $("#dateFrom").val("");
+  $("#dateTo").val("");
+
+  tours.dt.search("").draw();
+  festivals.dt.search("").draw();
+});
 
 
     $(".tab").on("click", function () {
@@ -256,4 +264,4 @@ $from.add($to).on("change", function () {
   }
 })();
 
-console.log("✅ app.js loaded");
+
