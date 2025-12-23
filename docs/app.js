@@ -235,9 +235,11 @@ function getActiveDT(tours, festivals) {
       $(panelId).addClass("active");
 
       // Fix sizing when switching tabs
-      setTimeout(() => {
-        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
-      }, 0);
+    setTimeout(() => {
+  tours.dt.columns.adjust();
+  festivals.dt.columns.adjust();
+}, 0);
+
 
       // Reapply current search term to the newly active table
       const term = ($("#globalSearch").val() || "").trim();
