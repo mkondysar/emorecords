@@ -51,12 +51,19 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
   const displayCols = finalCols.filter((c) => c !== "Source URL");
 
   // Build THEAD / TBODY
-  const $table = $(`#${tableId}`);
-  const $thead = $table.find("thead");
-  const $tbody = $table.find("tbody");
+const $table = $(`#${tableId}`);
+const $thead = $table.find("thead");
+const $tbody = $table.find("tbody");
 
-  $thead.empty();
-  $tbody.empty();
+// IMPORTANT: fully destroy + remove DataTables wrapper BEFORE rebuilding HTML
+if ($.fn.DataTable.isDataTable($table)) {
+  $table.DataTable().destroy(true); // true = remove added wrapper + controls
+}
+
+// Now rebuild the table safely
+$thead.empty();
+$tbody.empty();
+
 
   // Header row
   $thead.append(
@@ -95,11 +102,6 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
-
-  // Destroy existing DataTable instance safely
-  if ($.fn.DataTable.isDataTable($table)) {
-    $table.DataTable().destroy();
-  }
 
   // Figure out indices for hidden ISO cols (if they exist in displayCols)
   const startIdx = displayCols.indexOf("__startISO");
