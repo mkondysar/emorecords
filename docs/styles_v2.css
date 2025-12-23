@@ -533,3 +533,4 @@ table.dataTable td {
   background: rgba(255,255,255,0.06);
 }
 
+body { outline: 5px solid hotpink !important; }
