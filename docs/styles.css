@@ -356,7 +356,7 @@ table.dataTable tbody tr:hover {
 /* Make search box wider */
 .filters .filter-row {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: center;
 }
 
