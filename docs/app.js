@@ -34,7 +34,7 @@ function norm(s) {
 // -------------------------
 async function loadCsvIntoTable({ csvPath, tableId }) {
   const isFestivalsTable = tableId === "festivalsTable";
-
+    
   const res = await fetch(csvPath);
   if (!res.ok) throw new Error(`Failed to fetch ${csvPath}: ${res.status}`);
   const csvText = await res.text();
@@ -52,6 +52,8 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
     $table.DataTable().destroy(true);
   }
 
+  fixedColumns: isFestivalsTable ? false : { leftColumns: 1 },
+      
   $thead.empty();
   $tbody.empty();
 
