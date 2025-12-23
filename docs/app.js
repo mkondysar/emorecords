@@ -71,38 +71,34 @@ $tbody.empty();
 
   // Body rows
   data.forEach((row) => {
-    const tds = displayCols
-      .map((col) => {
-        const colNorm = norm(col);
-        // ALWAYS render ISO helper columns so DataTables can filter on them
-if (colNorm === "__startiso" || colNorm === "__endiso") {
-  return `<td>${escHtml(row[col])}</td>`;
-}
+const tds = displayCols.map(col => {
+  const colNorm = norm(col);
+  const rawVal = row[col];
+  const val = escHtml(rawVal);
+  const url = row["Source URL"];
 
-        const rawVal = row?.[col];
-        const val = escHtml(rawVal);
+  // 🔑 ISO COLUMNS — MUST BE RENDERED
+  if (colNorm === "__startiso" || colNorm === "__endiso") {
+    return `<td>${escHtml(rawVal)}</td>`;
+  }
 
-        // Use Source URL for linking (even though hidden)
-        const url = row?.["Source URL"];
-        const hasUrl = url && String(url).trim() !== "";
+  // FESTIVALS
+  if (isFestivalsTable && colNorm === "festival name") {
+    return url
+      ? `<td class="festival-name"><a href="${escAttr(url)}" target="_blank">${val}</a></td>`
+      : `<td class="festival-name">${val}</td>`;
+  }
 
-        // FESTIVALS: link Festival Name
-        if (isFestivalsTable && colNorm === "festival name") {
-          return hasUrl
-            ? `<td class="festival-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
-            : `<td class="festival-name">${val}</td>`;
-        }
+  // TOURS
+  if (!isFestivalsTable && colNorm === "tour name") {
+    return url
+      ? `<td class="tour-name"><a href="${escAttr(url)}" target="_blank">${val}</a></td>`
+      : `<td class="tour-name">${val}</td>`;
+  }
 
-        // TOURS: link Tour name (robust to case/spaces)
-        if (!isFestivalsTable && colNorm === "tour name") {
-          return hasUrl
-            ? `<td class="tour-name"><a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
-            : `<td class="tour-name">${val}</td>`;
-        }
+  return `<td>${val}</td>`;
+}).join("");
 
-        return `<td>${val}</td>`;
-      })
-      .join("");
 
     $tbody.append(`<tr>${tds}</tr>`);
   });
