@@ -30,18 +30,40 @@ function norm(s) {
   return String(s ?? "").trim().toLowerCase();
 }
 
+function parseMDY(s) {
+  const str = String(s ?? "").trim();
+  if (!str) return null;
+
+  // Accept YYYY-MM-DD (from <input type="date"> or already-ISO)
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const y = Number(isoMatch[1]), m = Number(isoMatch[2]), d = Number(isoMatch[3]);
+    return new Date(y, m - 1, d);
+  }
+
+  // Accept M/D/YYYY or MM/DD/YYYY
+  const mdyMatch = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (mdyMatch) {
+    const m = Number(mdyMatch[1]), d = Number(mdyMatch[2]), y = Number(mdyMatch[3]);
+    return new Date(y, m - 1, d);
+  }
+
+  // If we can't parse, return null
+  return null;
+}
+
 function parseStartEnd(text) {
   if (!text) return {};
   const clean = String(text).replace(/–/g, "-").trim();
-  const parts = clean.split("-").map((p) => p.trim()).filter(Boolean);
+  const parts = clean.split("-").map(p => p.trim()).filter(Boolean);
 
   if (parts.length === 1) {
-    const d = new Date(parts[0]);
+    const d = parseMDY(parts[0]);
     return { start: d, end: d };
   }
 
-  const start = new Date(parts[0]);
-  const end = new Date(parts.slice(1).join("-"));
+  const start = parseMDY(parts[0]);
+  const end = parseMDY(parts.slice(1).join("-"));
   return { start, end };
 }
 
