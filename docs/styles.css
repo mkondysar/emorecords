@@ -506,3 +506,34 @@ table.dataTable td {
   z-index: 5;
 }
 
+/* =========================
+   FixedColumns (frozen left)
+   Make it match your dark theme + row striping
+   ========================= */
+
+/* Base background + keep it above the scrolled table */
+.dtfc-fixed-left,
+.dtfc-fixed-left th,
+.dtfc-fixed-left td {
+  background: var(--card);
+}
+
+.dtfc-fixed-left {
+  z-index: 5;
+  box-shadow: 10px 0 18px rgba(0,0,0,.45); /* nice edge */
+}
+
+/* Match DataTables odd/even striping (adjust if your rows use different colors) */
+.dtfc-fixed-left tbody tr.odd td { background: rgba(255,255,255,0.03); }
+.dtfc-fixed-left tbody tr.even td { background: rgba(255,255,255,0.00); }
+
+/* Match hover state */
+.dtfc-fixed-left tbody tr:hover td {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Make sure text doesn’t “ghost” through */
+.dtfc-fixed-left td,
+.dtfc-fixed-left th {
+  background-clip: padding-box;
+}
