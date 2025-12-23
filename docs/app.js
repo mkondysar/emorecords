@@ -74,6 +74,11 @@ $tbody.empty();
     const tds = displayCols
       .map((col) => {
         const colNorm = norm(col);
+        // ALWAYS render ISO helper columns so DataTables can filter on them
+if (colNorm === "__startiso" || colNorm === "__endiso") {
+  return `<td>${escHtml(row[col])}</td>`;
+}
+
         const rawVal = row?.[col];
         const val = escHtml(rawVal);
 
