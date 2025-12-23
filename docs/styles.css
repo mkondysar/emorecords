@@ -319,4 +319,24 @@ table.dataTable tbody tr:hover {
 #clearFilters:hover { filter: brightness(1.05); }
 #clearFilters:active { transform: translateY(1px); }
 
+/* Make search box wider */
+.filters .filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filters .filter {
+  flex: 1;
+}
+
+/* Specifically boost the search input */
+#globalSearch {
+  width: 100%;
+  max-width: none;
+}
+#globalSearch {
+  padding: 14px 18px;
+  font-size: 1rem;
+}
 
