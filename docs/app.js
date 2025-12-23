@@ -27,9 +27,11 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
     });
   }
 
-  const displayCols = isFestivalsTable
-    ? finalCols.filter(c => c !== "Source URL")
-    : finalCols;
+  const displayCols = finalCols.filter(c => {
+  // Hide Source URL in BOTH tables (we'll still use it to build links)
+  if (c === "Source URL") return false;
+  return true;
+});
 
   const $thead = $(`#${tableId} thead`);
   const $tbody = $(`#${tableId} tbody`);
@@ -49,10 +51,14 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
           : `<td class="festival-name">${val}</td>`;
       }
 
-      if (!isFestivalsTable && col === "Source URL") {
-        return val
-          ? `<td><a href="${val}" target="_blank">link</a></td>`
-          : `<td></td>`;
+     // TOURS: Make "Tour name" clickable using Source URL (even though Source URL column is hidden)
+if (!isFestivalsTable && col === "Tour name") {
+  const url = row["Source URL"];
+  return url
+    ? `<td class="tour-name"><a href="${url}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
+    : `<td class="tour-name">${val}</td>`;
+}
+
       }
 
       return `<td>${val}</td>`;
