@@ -228,6 +228,19 @@ table.dataTable th {
   z-index: 5;
 }
 
+
+#festivalsTable th:nth-child(1),
+#festivalsTable td:nth-child(1) {
+  width: 18%;
+  white-space: normal;
+  word-break: break-word;
+}
+
+#festivalsTable td:nth-child(1) a {
+  display: inline-block;
+  max-width: 100%;
+}
+
 /* =========================
    LINKS + FOOTER
    ========================= */
