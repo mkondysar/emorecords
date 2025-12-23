@@ -96,9 +96,18 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
   }
   // Default sort:
   // - Tours: City (ascending)
-  // - Festivals: leave unsorted
+  // - Festivals: Date (ascending)
   let defaultOrder = [];
-  if (!isFestivalsTable) {
+
+  if (isFestivalsTable) {
+    // Try common date column names
+    const dateIdx =
+      cols.findIndex(c => norm(c) === "date") !== -1
+        ? cols.findIndex(c => norm(c) === "date")
+        : cols.findIndex(c => norm(c) === "dates");
+
+    if (dateIdx !== -1) defaultOrder = [[dateIdx, "asc"]];
+  } else {
     const cityIdx = cols.findIndex(c => norm(c) === "city");
     if (cityIdx !== -1) defaultOrder = [[cityIdx, "asc"]];
   }
