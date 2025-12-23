@@ -506,34 +506,34 @@ table.dataTable td {
   z-index: 5;
 }
 
-/* =========================
-   FixedColumns (frozen left)
-   Make it match your dark theme + row striping
-   ========================= */
+/* =========================================
+   FIXEDCOLUMNS: force frozen column opaque
+   ========================================= */
 
-/* Base background + keep it above the scrolled table */
 .dtfc-fixed-left,
-.dtfc-fixed-left th,
-.dtfc-fixed-left td {
-  background: var(--card);
+.dtfc-fixed-left * {
+  background-color: var(--card) !important;
 }
 
-.dtfc-fixed-left {
-  z-index: 5;
-  box-shadow: 10px 0 18px rgba(0,0,0,.45); /* nice edge */
+.DTFC_LeftWrapper,
+.DTFC_LeftHeadWrapper,
+.DTFC_LeftBodyWrapper,
+.DTFC_LeftWrapper table,
+.DTFC_LeftWrapper th,
+.DTFC_LeftWrapper td {
+  background-color: var(--card) !important;
 }
 
-/* Match DataTables odd/even striping (adjust if your rows use different colors) */
-.dtfc-fixed-left tbody tr.odd td { background: rgba(255,255,255,0.03); }
-.dtfc-fixed-left tbody tr.even td { background: rgba(255,255,255,0.00); }
-
-/* Match hover state */
-.dtfc-fixed-left tbody tr:hover td {
-  background: rgba(255,255,255,0.06);
-}
-
-/* Make sure text doesn’t “ghost” through */
 .dtfc-fixed-left td,
-.dtfc-fixed-left th {
+.dtfc-fixed-left th,
+.DTFC_LeftWrapper td,
+.DTFC_LeftWrapper th {
+  background-color: var(--card) !important;
+  background-image: none !important;
   background-clip: padding-box;
+}
+
+.dtfc-fixed-left,
+.DTFC_LeftWrapper {
+  box-shadow: 10px 0 18px rgba(0,0,0,.45);
 }
