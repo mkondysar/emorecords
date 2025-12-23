@@ -476,3 +476,18 @@ table.dataTable tbody tr:hover {
   white-space: nowrap;
 }
 
+/* Make DataTables horizontal scroll actually usable on iOS */
+.dataTables_wrapper {
+  width: 100%;
+}
+
+.dataTables_wrapper .dataTables_scrollBody {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent mobile from wrapping each letter/word into skinny columns */
+table.dataTable th,
+table.dataTable td {
+  white-space: nowrap;
+}
