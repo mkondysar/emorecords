@@ -214,31 +214,40 @@ table.dataTable th {
 /* =========================
    FESTIVAL NAME
    ========================= */
-#festivalsTable td.festival-name,
-#festivalsTable td.festival-name a {
-  color: #8be9fd;
-  text-decoration: none;
+/* Lock column sizing */
+#festivalsTable {
+  table-layout: fixed;
+  width: 100%;
 }
 
-#festivalsTable td.festival-name a:hover {
-  text-decoration: underline;
-}
-
-.dataTables_scrollHead {
-  z-index: 5;
-}
-
-
+/* Festival Name (col 1) – thinner */
 #festivalsTable th:nth-child(1),
 #festivalsTable td:nth-child(1) {
-  width: 18%;
-  white-space: normal;
-  word-break: break-word;
+  width: 16%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-#festivalsTable td:nth-child(1) a {
-  display: inline-block;
-  max-width: 100%;
+/* Location (col 2) – compact */
+#festivalsTable th:nth-child(2),
+#festivalsTable td:nth-child(2) {
+  width: 18%;
+}
+
+/* Dates (col 3) – narrow */
+#festivalsTable th:nth-child(3),
+#festivalsTable td:nth-child(3) {
+  width: 14%;
+  white-space: nowrap;
+}
+
+/* Lineup (col 4) – WIDE */
+#festivalsTable th:nth-child(4),
+#festivalsTable td:nth-child(4) {
+  width: 52%;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* =========================
