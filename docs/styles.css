@@ -280,3 +280,27 @@ table.dataTable.stripe tbody tr.even,
 table.dataTable.display tbody tr.even {
   background: transparent !important;
 }
+
+/* DataTables typography + spacing polish */
+table.dataTable {
+  border-collapse: collapse !important;
+  font-size: 0.9rem;
+}
+
+table.dataTable thead th {
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,.15) !important;
+}
+
+table.dataTable tbody td {
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  padding: 10px 12px;
+}
+
+/* Hover row */
+table.dataTable tbody tr:hover {
+  background: rgba(255,255,255,.06) !important;
+}
+
