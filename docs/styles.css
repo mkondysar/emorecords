@@ -491,3 +491,18 @@ table.dataTable th,
 table.dataTable td {
   white-space: nowrap;
 }
+
+/* Sticky first column for Tours (works without FixedColumns plugin) */
+#toursTable th:first-child,
+#toursTable td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--card);
+}
+
+/* Make header sit above body */
+.dataTables_scrollHead #toursTable th:first-child {
+  z-index: 5;
+}
+
