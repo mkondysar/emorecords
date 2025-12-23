@@ -94,6 +94,14 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
   if (sourceUrlIdx !== -1) {
     hiddenCols.push({ targets: sourceUrlIdx, visible: false, searchable: false });
   }
+  // Default sort:
+  // - Tours: City (ascending)
+  // - Festivals: leave unsorted
+  let defaultOrder = [];
+  if (!isFestivalsTable) {
+    const cityIdx = cols.findIndex(c => norm(c) === "city");
+    if (cityIdx !== -1) defaultOrder = [[cityIdx, "asc"]];
+  }
 
   const dt = $table.DataTable({
     responsive: false,
@@ -102,7 +110,7 @@ async function loadCsvIntoTable({ csvPath, tableId }) {
     scrollCollapse: true,
     pageLength: 25,
     autoWidth: false,
-    order: [],
+    order: defaultOrder,
     fixedHeader: true,
 
     // IMPORTANT: comment this out unless you also load FixedColumns JS
