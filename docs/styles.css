@@ -400,8 +400,8 @@ table.dataTable tbody tr:hover {
 /* Festivals: force column widths */
 #festivalsTable th:nth-child(1),
 #festivalsTable td:nth-child(1) {
-  width: 140px !important;      /* thinner festival name */
-  max-width: 140px !important;
+  width: 200px !important;      /* thinner festival name */
+  max-width: 200px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
