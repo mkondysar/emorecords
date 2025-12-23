@@ -166,8 +166,6 @@ const dt = $table.DataTable({
   fixedHeader: true,
   // (Optional but helps mobile): don't allow DataTables to change table width based on content
   // dom: "t<'dt-footer'ip>",
-
-    fixedColumns: isFestivalsTable ? false : { leftColumns: 1 },
   
   columnDefs: [
     ...hiddenCols,
