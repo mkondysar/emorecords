@@ -8,198 +8,219 @@
   --text: #f3f4f6;
   --accent: #ff2d86;
   --accent2: #7c3aed;
-
-  --border: rgba(255, 255, 255, 0.12);
-  --border2: rgba(255, 255, 255, 0.18);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --line: #242433;
+  --shadow: 0 12px 40px rgba(0,0,0,.35);
+  --radius: 16px;
 }
 
 /* =========================
-   PAGE BASE
+   BASE
    ========================= */
-html, body {
-  height: 100%;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: radial-gradient(1200px 600px at 30% 0%, rgba(124, 58, 237, 0.16), transparent 60%),
-              radial-gradient(1000px 500px at 80% 10%, rgba(255, 45, 134, 0.12), transparent 55%),
-              var(--bg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(255,45,134,.20), transparent 55%),
+    radial-gradient(1000px 600px at 80% 10%, rgba(124,58,237,.20), transparent 55%),
+    var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-/* Optional container if you use one */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 18px 16px 48px;
 }
 
 /* =========================
-   TAB BUTTONS (Tours / Festivals)
+   HERO / HEADER
    ========================= */
-.tab-bar {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin: 10px 0 14px;
+.hero {
+  padding: 36px 0 18px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(18,18,26,.85), rgba(11,11,16,.75));
 }
 
-.tab-btn {
-  appearance: none;
-  border: 1px solid var(--border2);
-  background: rgba(18, 18, 26, 0.7);
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.hero h1 {
+  margin: 0 0 6px;
+  letter-spacing: .3px;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* =========================
+   WRAP
+   ========================= */
+.wrap {
+  max-width: 1100px;
+  margin: 18px auto 40px;
+  padding: 0 18px;
+}
+
+/* =========================
+   TABS
+   ========================= */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+
+.tab {
+  background: var(--card);
   color: var(--text);
-  padding: 8px 14px;
+  border: 1px solid var(--line);
+  padding: 10px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  box-shadow: var(--shadow);
+  transition: transform .08s ease;
 }
 
-.tab-btn:hover {
-  border-color: rgba(255, 255, 255, 0.28);
-  transform: translateY(-1px);
-}
+.tab:hover { transform: translateY(-1px); }
 
-.tab-btn.is-active {
-  border-color: rgba(255, 45, 134, 0.75);
-  box-shadow: 0 0 0 2px rgba(255, 45, 134, 0.16);
+.tab.active {
+  border-color: rgba(255,45,134,.55);
+  box-shadow: 0 0 0 2px rgba(255,45,134,.18), var(--shadow);
 }
-
-/* Panels (hide/show sections via JS) */
-.tab-panel { display: none; }
-.tab-panel.is-active { display: block; }
 
 /* =========================
-   DATATABLES THEME (Dark)
+   FILTERS
+   ========================= */
+.filters {
+  background: rgba(18,18,26,.85);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+}
+
+label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+input,
+select {
+  background: #0f0f16;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(124,58,237,.6);
+  box-shadow: 0 0 0 2px rgba(124,58,237,.2);
+}
+
+.btn {
+  background: linear-gradient(90deg, rgba(255,45,134,.9), rgba(124,58,237,.9));
+  border: none;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* =========================
+   PANELS
+   ========================= */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* =========================
+   DATATABLES BASE
    ========================= */
 .dataTables_wrapper {
-  color: var(--text);
+  overflow-x: auto;
 }
 
-/* Top controls spacing */
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-  margin-bottom: 10px;
-}
-
-/* "Show entries" select + label */
-.dataTables_wrapper .dataTables_length label,
-.dataTables_wrapper .dataTables_filter label {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-/* Search input */
-.dataTables_wrapper .dataTables_filter input {
-  background: rgba(18, 18, 26, 0.85);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 8px 10px;
-  outline: none;
-  min-width: 4000px; /* makes the search box wider */
-}
-
-.dataTables_wrapper .dataTables_filter input:focus {
-  border-color: rgba(255, 45, 134, 0.7);
-  box-shadow: 0 0 0 2px rgba(255, 45, 134, 0.12);
-}
-
-/* Length dropdown */
-.dataTables_wrapper select {
-  background: rgba(18, 18, 26, 0.85);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 6px 10px;
-  outline: none;
-}
-
-/* Table base */
 table.dataTable {
-  width: 100% !important;
-  border-collapse: separate !important;
-  border-spacing: 0;
-  background: rgba(18, 18, 26, 0.65);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
+  background: rgba(18,18,26,.85);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
+  width: 100% !important;
 }
 
-/* Header */
 table.dataTable thead th {
-  background: rgba(10, 10, 16, 0.9);
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.78rem;
-  border-bottom: 1px solid var(--border);
-  padding: 14px 14px !important;
+  background: rgba(18,18,26,.95);
+  border-bottom: 1px solid var(--line);
 }
 
-/* Rows */
-table.dataTable tbody td {
-  padding: 16px 14px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  vertical-align: top;
+table.dataTable tbody tr:nth-child(even) {
+  background: rgba(255,255,255,.02);
 }
 
-/* Hover row */
-table.dataTable tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length {
+  display: none;
 }
 
-/* Links in table */
-table.dataTable a {
-  color: #7dd3fc;
-  text-decoration: underline;
-}
-
-table.dataTable a:hover {
-  color: #bae6fd;
-}
-
-/* Pagination */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-  border-radius: 10px !important;
-  border: 1px solid var(--border2) !important;
-  background: rgba(18, 18, 26, 0.7) !important;
-  color: var(--text) !important;
-  margin: 0 3px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  border-color: rgba(255, 255, 255, 0.28) !important;
-  background: rgba(18, 18, 26, 0.9) !important;
-  color: var(--text) !important;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-  border-color: rgba(255, 45, 134, 0.75) !important;
-  box-shadow: 0 0 0 2px rgba(255, 45, 134, 0.14);
-}
-
-/* Info text */
-.dataTables_wrapper .dataTables_info {
-  color: var(--muted);
-  padding-top: 10px;
-}
-
-/* Remove DataTables default stripe color if present */
-table.dataTable.stripe tbody tr.odd,
-table.dataTable.display tbody tr.odd {
-  background: transparent;
+.dataTables_info,
+.dataTables_paginate {
+  color: var(--muted) !important;
+  margin-top: 10px;
 }
 
 /* =========================
-   FESTIVALS COLUMN SIZING
-   (Festival Name thinner, Lineup wider)
+   TEXT WRAPPING + WIDTHS
    ========================= */
+table.dataTable td,
+table.dataTable th {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* Headliner column */
+#toursTable th:first-child,
+#toursTable td:first-child {
+  width: 170px;
+  max-width: 170px;
+  font-weight: 700;
+}
+
+/* Other columns */
+#toursTable th:not(:first-child),
+#toursTable td:not(:first-child),
+#festivalsTable th:not(:first-child),
+#festivalsTable td:not(:first-child) {
+  width: 170px;
+  max-width: 170px;
+}
+
+/* =========================
+   FESTIVAL NAME
+   ========================= */
+/* Lock column sizing */
+#festivalsTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Festival Name (col 1) – thinner */
 #festivalsTable th:nth-child(1),
 #festivalsTable td:nth-child(1) {
   width: 16%;
@@ -208,30 +229,147 @@ table.dataTable.display tbody tr.odd {
   text-overflow: ellipsis;
 }
 
+/* Location (col 2) – compact */
 #festivalsTable th:nth-child(2),
 #festivalsTable td:nth-child(2) {
   width: 18%;
 }
 
+/* Dates (col 3) – narrow */
 #festivalsTable th:nth-child(3),
 #festivalsTable td:nth-child(3) {
   width: 14%;
   white-space: nowrap;
 }
 
+/* Lineup (col 4) – WIDE */
 #festivalsTable th:nth-child(4),
 #festivalsTable td:nth-child(4) {
   width: 52%;
   white-space: normal;
   word-break: break-word;
+}
+#festivalsTable td:nth-child(4) {
   line-height: 1.4;
+}
+/* DataTables uses separate header/body tables when scrolling.
+   Force BOTH to use fixed layout so widths match. */
+#festivalsTable,
+#festivalsTable.dataTable,
+.dataTables_scrollHeadInner table,
+.dataTables_scrollBody table {
+  table-layout: fixed !important;
+  width: 100% !important;
 }
 
 /* =========================
-   MOBILE TWEAKS
+   LINKS + FOOTER
    ========================= */
-@media (max-width: 720px) {
-  .dataTables_wrapper .dataTables_filter input {
-    min-width: 220px;
-  }
+a { color: #8be9fd; }
+
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+  color: var(--muted);
+}
+/* === HARD OVERRIDE FOR DATATABLES WHITE BACKGROUNDS === */
+table.dataTable,
+table.dataTable tbody,
+table.dataTable thead,
+table.dataTable tfoot,
+table.dataTable tr,
+table.dataTable th,
+table.dataTable td {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+.dataTables_wrapper,
+.dataTables_scroll,
+.dataTables_scrollHead,
+.dataTables_scrollBody,
+.dataTables_scrollFoot {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+}
+
+/* Header row */
+table.dataTable thead th {
+  background: var(--card) !important;
+}
+
+/* Zebra rows (optional) */
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+  background: rgba(255,255,255,.03) !important;
+}
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.even {
+  background: transparent !important;
+}
+
+/* DataTables typography + spacing polish */
+table.dataTable {
+  border-collapse: collapse !important;
+  font-size: 0.9rem;
+}
+
+table.dataTable thead th {
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,.15) !important;
+}
+
+table.dataTable tbody td {
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  padding: 10px 12px;
+}
+
+/* Hover row */
+table.dataTable tbody tr:hover {
+  background: rgba(255,255,255,.06) !important;
+}
+
+/* Make Clear Filters match the theme */
+#clearFilters{
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+#clearFilters:hover { filter: brightness(1.05); }
+#clearFilters:active { transform: translateY(1px); }
+
+/* Make search box wider */
+.filters .filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filters .filter {
+  flex: 1;
+}
+
+/* Specifically boost the search input */
+#globalSearch {
+  width: 100%;
+  max-width: none;
+}
+#globalSearch {
+  padding: 14px 18px;
+  font-size: 1rem;
 }
