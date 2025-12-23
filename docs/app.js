@@ -174,17 +174,24 @@ function toISO(d) {
 
 (async function init() {
   try {
-    await loadCsvIntoTable({
-      csvPath: "./data/tours.csv",
-      tableId: "toursTable",
-      dateColNameCandidates: ["Date"]
-    });
+   const tours = await loadCsvIntoTable({
+  csvPath: "./data/tours.csv",
+  tableId: "toursTable",
+  dateColNameCandidates: ["Date"]
+});
 
-    await loadCsvIntoTable({
-      csvPath: "./data/festivals.csv",
-      tableId: "festivalsTable",
-      dateColNameCandidates: ["Dates"]
-    });
+const festivals = await loadCsvIntoTable({
+  csvPath: "./data/festivals.csv",
+  tableId: "festivalsTable",
+  dateColNameCandidates: ["Dates"]
+});
+// Hook your custom "Search everything" box to BOTH tables
+$("#globalSearch").on("input", function () {
+  const term = this.value || "";
+  tours.dt.search(term).draw();
+  festivals.dt.search(term).draw();
+});
+
 
     $(".tab").on("click", function () {
       $(".tab").removeClass("active");
