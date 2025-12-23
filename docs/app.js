@@ -52,7 +52,11 @@ async function loadCsvIntoTable({ csvPath, tableId, dateColNameCandidates }) {
       }
 
      // TOURS: Make "Tour name" clickable using Source URL (even though Source URL column is hidden)
-if (!isFestivalsTable && col === "Tour Name") {
+if (
+  !isFestivalsTable &&
+  col.trim().toLowerCase() === "tour name"
+) {
+
   const url = row["Source URL"];
   return url
     ? `<td class="tour-name"><a href="${url}" target="_blank" rel="noopener noreferrer">${val}</a></td>`
