@@ -414,3 +414,65 @@ table.dataTable tbody tr:hover {
   word-break: break-word !important;
 }
 
+/* ===== Tours table column sizing ===== */
+
+/* Headliner (col 1) – leave as-is */
+#toursTable th:nth-child(1),
+#toursTable td:nth-child(1) {
+  width: 18%;
+}
+
+/* Tour Name (col 2) – leave as-is */
+#toursTable th:nth-child(2),
+#toursTable td:nth-child(2) {
+  width: 20%;
+}
+
+/* Support (col 3) – thinner */
+#toursTable th:nth-child(3),
+#toursTable td:nth-child(3) {
+  width: 18%;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Date (col 4) – narrow */
+#toursTable th:nth-child(4),
+#toursTable td:nth-child(4) {
+  width: 8%;
+  white-space: nowrap;
+}
+
+/* Venue (col 5) – medium */
+#toursTable th:nth-child(5),
+#toursTable td:nth-child(5) {
+  width: 14%;
+}
+
+/* City (col 6) – medium */
+#toursTable th:nth-child(6),
+#toursTable td:nth-child(6) {
+  width: 12%;
+}
+
+/* State (col 7) – very small */
+#toursTable th:nth-child(7),
+#toursTable td:nth-child(7) {
+  width: 6%;
+  white-space: nowrap;
+}
+
+/* Country (col 8) – small */
+#toursTable th:nth-child(8),
+#toursTable td:nth-child(8) {
+  width: 8%;
+  white-space: nowrap;
+}
+
+/* Source URL (col 9) – tiny */
+#toursTable th:nth-child(9),
+#toursTable td:nth-child(9) {
+  width: 6%;
+  white-space: nowrap;
+}
+
