@@ -52,6 +52,31 @@ function parseMDY(s) {
   return null;
 }
 
+function parseMDY(str) {
+  const s = String(str ?? "").trim();
+  if (!s) return null;
+
+  // M/D/YYYY or MM/DD/YYYY
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    const month = Number(m[1]);
+    const day = Number(m[2]);
+    const year = Number(m[3]);
+    return new Date(year, month - 1, day); // local date (safe)
+  }
+
+  // If already ISO
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const year = Number(iso[1]);
+    const month = Number(iso[2]);
+    const day = Number(iso[3]);
+    return new Date(year, month - 1, day);
+  }
+
+  return null;
+}
+
 function parseStartEnd(text) {
   if (!text) return {};
   const clean = String(text).replace(/–/g, "-").trim();
@@ -67,10 +92,6 @@ function parseStartEnd(text) {
   return { start, end };
 }
 
-function toISO(d) {
-  if (!(d instanceof Date) || isNaN(d)) return "";
-  return d.toISOString().split("T")[0];
-}
 
 // -------------------------
 // CSV → DataTable loader
